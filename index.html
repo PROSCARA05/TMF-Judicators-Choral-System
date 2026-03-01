@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMF Choral Judicators System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <img src="logo/TMF.jpeg" alt="TMF Logo" class="tmf-logo-img">
+                </div>
+                <div class="logo-text">
+                    <h1>TIRO MPANE FOUNDATION</h1>
+                    <div class="subtitle">NATIONAL CHORALE EISTEDDFOD</div>
+                </div>
+            </div>
+            <div class="nav-actions">
+                <div class="search-container" id="searchContainer" style="display: none;">
+                    <div class="search-box">
+                        <input type="text" 
+                               id="globalSearch" 
+                               class="search-input" 
+                               placeholder="Search choirs, assessments, users..."
+                               onkeyup="performGlobalSearch(event)">
+                        <button class="search-btn" onclick="performGlobalSearch(event)">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div id="searchResults" class="search-results" style="display: none;"></div>
+                </div>
+                <div id="userBadge" class="user-badge" style="display: none;">
+                    <i class="fas fa-user"></i>
+                    <span id="userName">User</span>
+                    <span id="userRole"></span>
+                </div>
+                <button id="loginButton" class="login-btn" onclick="showLogin()">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div class="main-content" id="mainContent">
+        <!-- Welcome Section -->
+        <div class="text-center mb-5 fade-in" id="welcomeSection">
+            <h2 class="mb-3" style="color: var(--primary-gold); font-size: 2.5rem;">Judicators System</h2>
+            <p style="color: rgba(255, 255, 255, 0.8); font-size: 1.1rem; max-width: 800px; margin: 0 auto;">
+                Welcome to the official judging system for the Tiro Mpane Foundation National Chorale Eisteddfod. 
+                Access assessment tools, live scores, and competition results.
+            </p>
+        </div>
+        
+        <!-- Dashboard Cards -->
+        <div id="dashboardContent" style="display: none;">
+            <!-- Dynamic content will be loaded here -->
+        </div>
+        
+        <!-- Login Instructions (Initially shown) -->
+        <div id="loginInstructions" class="text-center fade-in" style="margin-top: 4rem;">
+            <div class="card-icon" style="margin: 0 auto 2rem; width: 80px; height: 80px;">
+                <i class="fas fa-lock" style="font-size: 2rem;"></i>
+            </div>
+            <h3 style="color: var(--primary-gold); margin-bottom: 1rem;">Secure Login Required</h3>
+            <p style="color: rgba(255, 255, 255, 0.8); max-width: 600px; margin: 0 auto 2rem;">
+                Please login with your credentials to access the Judicators System. 
+                You'll need your username, password, and assigned role to proceed.
+            </p>
+            <button class="login-btn" onclick="showLogin()" style="padding: 0.75rem 2rem;">
+                <i class="fas fa-sign-in-alt"></i> Click to Login
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-left">
+                <span>© 2026 Tiro Mpane Foundation</span>
+                <span>•</span>
+                <span>National Chorale Eisteddfod</span>
+                <span>•</span>
+                <span>All rights reserved</span>
+            </div>
+            <div class="footer-right">
+                <span class="version">System Version 2.1.0</span>
+                <span style="margin-left: 1rem;">For official use only</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div id="loginOverlay" class="login-overlay" style="display: none;">
+        <div class="login-modal fade-in">
+            <div class="login-header">
+                <h2>System Login</h2>
+            </div>
+            <div class="login-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" 
+                               id="username" 
+                               class="form-input" 
+                               placeholder="Enter your username" 
+                               required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="password-container">
+                            <input type="password" 
+                                   id="password" 
+                                   class="form-input" 
+                                   placeholder="Enter your password" 
+                                   required>
+                            <button type="button" 
+                                    class="password-toggle" 
+                                    id="togglePassword"
+                                    onclick="togglePasswordVisibility()">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div id="passwordFeedback" style="display: none; margin-top: 0.5rem;">
+                            <span style="color: #4CAF50; font-size: 0.85rem;">
+                                <i class="fas fa-check-circle"></i> Password accepted
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="role" class="form-label">Role</label>
+                        <select id="role" class="custom-select" required>
+                            <option value="">Select your role</option>
+                            <option value="assessor">Assessor</option>
+                            <option value="chair">Chair Assessor</option>
+                            <option value="admin">Administrator</option>
+                            <option value="founder">Founder</option>
+                            <option value="monitor">Monitor</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="login-btn" style="width: 100%; padding: 0.75rem;">
+                        <i class="fas fa-sign-in-alt"></i> Login to System
+                    </button>
+                    
+                    <div class="login-footer">
+                        <a href="#" class="forgot-password" onclick="showForgotPassword()">
+                            <i class="fas fa-key"></i> Forgot Password?
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+        <i class="fas fa-spinner"></i>
+        <div>Processing...</div>
+    </div>
+
+    <!-- Professional Adjudication Modal -->
+    <div id="choralAdjudicationModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="max-width: 95%; max-height: 95vh; width: 95%;">
+            <div class="modal-header adjudication-header">
+                <span><i class="fas fa-clipboard-check"></i> Professional Choral Adjudication System</span>
+                <!-- REMOVED X CLOSE BUTTON -->
+            </div>
+            <div class="modal-body" style="padding: 0;">
+                <div id="adjudicationSystemContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Excel Methodology Modal -->
+    <div id="methodologyModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content methodology-modal">
+            <div class="modal-header">
+                <span><i class="fas fa-calculator"></i> Excel Methodology Calculations</span>
+                <!-- UPDATED: Button with black text and border -->
+                <div style="margin-left: auto;">
+                    <button class="action-btn outline" onclick="closeMethodologyModal()" style="padding: 0.25rem 0.75rem; font-size: 0.9rem; color: #000 !important; border-color: #000 !important;">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="methodologyContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgotPasswordModal" class="login-overlay" style="display: none;">
+        <div class="login-modal fade-in">
+            <div class="login-header">
+                <h2>Reset Password</h2>
+            </div>
+            <div class="login-body">
+                <form id="forgotPasswordForm">
+                    <div class="form-group">
+                        <label for="resetEmail" class="form-label">Email Address</label>
+                        <input type="email" 
+                               id="resetEmail" 
+                               class="form-input" 
+                               placeholder="Enter your email" 
+                               required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="resetUsername" class="form-label">Username</label>
+                        <input type="text" 
+                               id="resetUsername" 
+                               class="form-input" 
+                               placeholder="Enter your username" 
+                               required>
+                    </div>
+                    
+                    <button type="submit" class="login-btn" style="width: 100%; padding: 0.75rem;">
+                        <i class="fas fa-paper-plane"></i> Send Reset Link
+                    </button>
+                    
+                    <div class="login-footer">
+                        <a href="#" class="forgot-password" onclick="closeForgotPassword()">
+                            <i class="fas fa-arrow-left"></i> Back to Login
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Management Modal -->
+    <div id="userManagementModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <span>Manage Users</span>
+                <!-- UPDATED: Button with black text and border -->
+                <div style="margin-left: auto;">
+                    <button class="action-btn outline" onclick="closeUserManagement()" style="padding: 0.25rem 0.75rem; font-size: 0.9rem; color: #000 !important; border-color: #000 !important;">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="userManagementContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit User Modal -->
+    <div id="userFormModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="userFormTitle">Add New User</span>
+                <!-- UPDATED: Button with black text and border -->
+                <div style="margin-left: auto;">
+                    <button class="action-btn outline" onclick="closeUserForm()" style="padding: 0.25rem 0.75rem; font-size: 0.9rem; color: #000 !important; border-color: #000 !important;">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <input type="hidden" id="editUserId">
+                    <div class="form-group">
+                        <label for="newUsername" class="form-label">Username</label>
+                        <input type="text" id="newUsername" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword" class="form-label">Password</label>
+                        <input type="password" id="newPassword" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newName" class="form-label">Full Name</label>
+                        <input type="text" id="newName" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newRole" class="form-label">Role</label>
+                        <select id="newRole" class="custom-select" required>
+                            <option value="">Select role</option>
+                            <option value="assessor">Assessor</option>
+                            <option value="chair">Chair Assessor</option>
+                            <option value="admin">Administrator</option>
+                            <option value="founder">Founder</option>
+                            <option value="monitor">Monitor</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="newEmail" class="form-label">Email (optional)</label>
+                        <input type="email" id="newEmail" class="form-input">
+                    </div>
+                    <button type="submit" class="action-btn" style="width: 100%;">
+                        <i class="fas fa-save"></i> Save User
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Choirs Modal -->
+    <div id="importChoirsModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span><i class="fas fa-file-import"></i> Import Choirs Data</span>
+                <div style="margin-left: auto;">
+                    <button class="action-btn outline" onclick="closeImportChoirsModal()" style="padding: 0.25rem 0.75rem; font-size: 0.9rem; color: #000 !important; border-color: #000 !important;">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4">
+                    <h5 style="color: var(--primary-gold); margin-bottom: 1rem;">Import Instructions</h5>
+                    <div class="alert alert-info" style="background: rgba(33, 150, 243, 0.1); border: 1px solid rgba(33, 150, 243, 0.3); color: var(--light-text);">
+                        <h6><i class="fas fa-info-circle"></i> Required Excel Format:</h6>
+                        <p style="margin-bottom: 0.5rem;">Your Excel file must contain the following columns in this exact order:</p>
+                        <ol style="margin: 0; padding-left: 1.5rem;">
+                            <li><strong>Choir Name</strong> - The full name of the choir</li>
+                            <li><strong>Region</strong> - Province/Region (e.g., Gauteng, Western Cape)</li>
+                            <li><strong>Category</strong> - GREAT CHAMPS, LARGE, or STANDARD</li>
+                            <li><strong>African Song</strong> - Title of the African piece</li>
+                            <li><strong>Western Song</strong> - Title of the Western piece</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="importFile" class="form-label">
+                        <i class="fas fa-file-excel"></i> Select Excel File (.xlsx, .xls)
+                    </label>
+                    <input type="file" 
+                           id="importFile" 
+                           class="form-input" 
+                           accept=".xlsx,.xls,.csv"
+                           onchange="handleFileSelect(this)">
+                    <div id="fileInfo" style="margin-top: 0.5rem; display: none;">
+                        <span style="color: #4CAF50; font-size: 0.9rem;">
+                            <i class="fas fa-check-circle"></i> <span id="fileName"></span>
+                        </span>
+                    </div>
+                </div>
+                
+                <div id="importPreview" style="display: none;">
+                    <h6 style="color: var(--primary-gold); margin-bottom: 1rem;">Preview of Data to Import:</h6>
+                    <div style="max-height: 300px; overflow-y: auto; border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 8px; background: rgba(255, 255, 255, 0.02);">
+                        <table class="results-table" style="font-size: 0.9rem;">
+                            <thead style="position: sticky; top: 0; background: var(--medium-gray);">
+                                <tr>
+                                    <th>Choir Name</th>
+                                    <th>Region</th>
+                                    <th>Category</th>
+                                    <th>African Song</th>
+                                    <th>Western Song</th>
+                                </tr>
+                            </thead>
+                            <tbody id="previewTableBody">
+                                <!-- Preview data will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div id="importErrors" style="display: none;">
+                    <div class="alert alert-danger" style="background: rgba(244, 67, 54, 0.1); border: 1px solid rgba(244, 67, 54, 0.3); color: var(--light-text);">
+                        <h6><i class="fas fa-exclamation-triangle"></i> Validation Errors:</h6>
+                        <ul id="errorList" style="margin: 0.5rem 0 0 1.5rem;">
+                            <!-- Errors will be listed here -->
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-2 mt-4">
+                    <button type="button" class="action-btn" onclick="importChoirsData()" id="importBtn" style="display: none;">
+                        <i class="fas fa-upload"></i> Import Choirs
+                    </button>
+                    <button type="button" class="action-btn outline" onclick="downloadTemplate()">
+                        <i class="fas fa-download"></i> Download Template
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Choir Modal -->
+    <div id="choirFormModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="choirFormTitle">Add New Choir</span>
+                <!-- UPDATED: Button with black text and border -->
+                <div style="margin-left: auto;">
+                    <button class="action-btn outline" onclick="closeChoirForm()" style="padding: 0.25rem 0.75rem; font-size: 0.9rem; color: #000 !important; border-color: #000 !important;">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="choirForm">
+                    <input type="hidden" id="editChoirId">
+                    <div class="form-group">
+                        <label for="choirName" class="form-label">Choir Name</label>
+                        <input type="text" id="choirName" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="choirRegion" class="form-label">Region</label>
+                        <input type="text" id="choirRegion" class="form-input" placeholder="Enter region (e.g., Gauteng, Western Cape, etc.)" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="choirCategory" class="form-label">Category</label>
+                        <select id="choirCategory" class="custom-select" required>
+                            <option value="">Select category</option>
+                            <option value="GREAT CHAMPS">Great Champs</option>
+                            <option value="LARGE">Large Category</option>
+                            <option value="STANDARD">Standard Category</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="choirAfricanSong" class="form-label">African Song</label>
+                        <input type="text" id="choirAfricanSong" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="choirWesternSong" class="form-label">Western Song</label>
+                        <input type="text" id="choirWesternSong" class="form-input" required>
+                    </div>
+                    <button type="submit" class="action-btn" style="width: 100%;">
+                        <i class="fas fa-save"></i> Save Choir
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Choir Detailed Report Modal -->
+    <div id="choirReportModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <span>Choir Assessment Report</span>
+                <!-- UPDATED: Button with black text and border -->
+                <div style="margin-left: auto;">
+                    <button class="action-btn outline" onclick="closeChoirReportModal()" style="padding: 0.25rem 0.75rem; font-size: 0.9rem; color: #000 !important; border-color: #000 !important;">
+                        <i class="fas fa-arrow-left"></i> Back to Results
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="choirReportContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Judge Scores Entry Modal -->
+    <div id="judgeScoresModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <span>Enter Judge Scores</span>
+                <!-- UPDATED: Button with black text and border -->
+                <div style="margin-left: auto;">
+                    <button class="action-btn outline" onclick="closeJudgeScoresModal()" style="padding: 0.25rem 0.75rem; font-size: 0.9rem; color: #000 !important; border-color: #000 !important;">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="judgeScoresContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final Results Modal -->
+    <div id="finalResultsModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <span>Final Competition Results</span>
+                <!-- UPDATED: Button with black text and border -->
+                <div style="margin-left: auto;">
+                    <button class="action-btn outline" onclick="closeFinalResultsModal()" style="padding: 0.25rem 0.75rem; font-size: 0.9rem; color: #000 !important; border-color: #000 !important;">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="finalResultsContent"></div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
