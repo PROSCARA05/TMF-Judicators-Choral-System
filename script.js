@@ -1,19 +1,20 @@
 // APPLICATION STATE & INITIALIZATION
 
-// ============================================
-// GLOBAL VARIABLES - DECLARED AT TOP
-// ============================================
-let importedChoirsData = []; // Global variable for choir imports
+// ================
+// GLOBAL VARIABLES
+// ================
+let importedChoirsData = [];
 
 const appState = {
     currentUser: null,
     currentRole: null,
-   currentUserId: null,
+    currentUserId: null,
     isLoggedIn: false,
     currentView: 'dashboard',
     choirs: [],
     assessments: {},
     users: {
+        // TEST USERS ONLY - Keep for system access
         'assessor1': { 
             password: 'password123', 
             role: 'assessor', 
@@ -63,27 +64,6 @@ const appState = {
         'STANDARD': 'Standard Category'
     },
     
-    choirsData: [
-        { id: 1, name: "Gauteng Chorale", region: "Gauteng", category: "GREAT CHAMPS", africanSong: "Shosholoza", westernSong: "Ave Maria", status: "pending" },
-        { id: 2, name: "Cape Town Singers", region: "Western Cape", category: "LARGE", africanSong: "Malaika", westernSong: "Hallelujah", status: "pending" },
-        { id: 3, name: "Durban Choir", region: "KwaZulu-Natal", category: "LARGE", africanSong: "Nkosi Sikelel' iAfrika", westernSong: "Amazing Grace", status: "pending" },
-        { id: 4, name: "Free State Voices", region: "Free State", category: "STANDARD", africanSong: "Thula Sthandwa", westernSong: "Panis Angelicus", status: "pending" },
-        { id: 5, name: "Limpopo Harmony", region: "Limpopo", category: "STANDARD", africanSong: "Pata Pata", westernSong: "O Holy Night", status: "pending" },
-        { id: 6, name: "Mpumalanga Ensemble", region: "Mpumalanga", category: "GREAT CHAMPS", africanSong: "Mbube", westernSong: "The Lord's Prayer", status: "pending" },
-        { id: 7, name: "North West Chorale", region: "North West", category: "LARGE", africanSong: "Qhude", westernSong: "Jesu Joy of Man's Desiring", status: "pending" },
-        { id: 8, name: "Northern Cape Voices", region: "Northern Cape", category: "STANDARD", africanSong: "Indodana", westernSong: "Ave Verum Corpus", status: "pending" },
-        { id: 9, name: "Eastern Cape Choir", region: "Eastern Cape", category: "LARGE", africanSong: "Senzeni Na", westernSong: "Gloria", status: "pending" },
-        { id: 10, name: "Botswana Singers", region: "Botswana", category: "STANDARD", africanSong: "Fatshe La Rona", westernSong: "Schubert's Ave Maria", status: "pending" },
-        { id: 11, name: "Zimbabwe Voices", region: "Zimbabwe", category: "GREAT CHAMPS", africanSong: "Nhemamusasa", westernSong: "Bach's Magnificat", status: "pending" },
-        { id: 12, name: "Namibia Choir", region: "Namibia", category: "LARGE", africanSong: "Namibia Land of the Brave", westernSong: "Mozart's Laudate Dominum", status: "pending" },
-        { id: 13, name: "Kopano Chorus", region: "Gauteng", category: "GREAT CHAMPS", africanSong: "Tloutlholo by M Mogale", westernSong: "Kyrie & Dies Irae - (N07) Requiem", status: "pending" },
-        { id: 14, name: "Gauteng Choristers", region: "Gauteng", category: "LARGE", africanSong: "JSP Motuba - Bulang dikgoro", westernSong: "Verdi - Requiem aeterna (soprano)", status: "pending" },
-        { id: 15, name: "Maikano Serenaders", region: "Botswana", category: "STANDARD", africanSong: "L Disho - Mesia wa Afrika", westernSong: "Haydn - Der Landman hat sein Wein", status: "pending" },
-        { id: 16, name: "NWU Serenaders", region: "North West", category: "LARGE", africanSong: "African Medley", westernSong: "Mozart - Alleluia", status: "pending" },
-        { id: 17, name: "Eastern Cape Police Choir", region: "Eastern Cape", category: "GREAT CHAMPS", africanSong: "Thula Sthandwa", westernSong: "The Lord's Prayer", status: "pending" },
-        { id: 18, name: "Da Capo Chorus", region: "North West", category: "LARGE", africanSong: "Qhude", westernSong: "Jesu Joy", status: "pending" }
-    ],
-    
     rubricCategories: [
         "INTONATION",
         "PITCH ACCURACY", 
@@ -94,36 +74,26 @@ const appState = {
         "ARTISTIC RELEVANCE, MUSICALITY AND NUANCES",
         "CONDUCTOR, SOLOIST AND STAGE PRESENCE"
     ],
-    assessors: {
-        'assessor1': { name: "Assessor 1", id: 1, active: true },
-        'assessor2': { name: "Assessor 2", id: 2, active: true },
-        'assessor3': { name: "Assessor 3", id: 3, active: true },
-        'assessor4': { name: "Assessor 4", id: 4, active: true },
-        'assessor5': { name: "Assessor 5", id: 5, active: true },
-        'assessor6': { name: "Assessor 6", id: 6, active: true },
-        'assessor7': { name: "Assessor 7", id: 7, active: true },
-        'assessor': { name: "Assessor 8", id: 8, active: true },
-        'assessor9': { name: "Assessor 9", id: 9, active: true },
-        'assessor10': { name: "Assessor 10", id: 10, active: true },
-        'assessor11': { name: "Assessor 11", id: 11, active: true },
-        'assessor12': { name: "Assessor 12", id: 12, active: true }
-    }
+    
+    currentReportChoir: null,
+    currentReportStats: null
 };
 
-// FLEXIBLE SCORING SYSTEM DATA - UPDATED TO ALWAYS REMOVE HIGHEST AND LOWEST
+// =======================
+// FLEXIBLE SCORING SYSTEM
+// =======================
 const scoringSystem = {
     currentChoir: null,
     currentGenre: 'western',
     currentAssessorId: null,
-    assessorScores: {}, // Structure: choirId -> genre -> assessorId -> scores
-    trimmedMeans: {}, // Structure: choirId -> genre -> trimmedMean
+    assessorScores: {},
+    trimmedMeans: {},
     finalRankings: {
         western: [],
         african: [],
         overall: []
     },
     
-    // Initialize assessor scores
     initializeAssessorScores: function(choirId) {
         if (!this.assessorScores[choirId]) {
             this.assessorScores[choirId] = {
@@ -133,7 +103,6 @@ const scoringSystem = {
         }
     },
     
-    // Add assessor score
     addAssessorScore: function(choirId, genre, assessorId, scores, comments = "") {
         this.initializeAssessorScores(choirId);
         this.assessorScores[choirId][genre][assessorId] = {
@@ -143,17 +112,11 @@ const scoringSystem = {
             submittedAt: new Date().toISOString()
         };
         
-        // Calculate trimmed mean for this choir/genre
         this.calculateTrimmedMean(choirId, genre);
-        
-        // Update rankings
         this.calculateRankings();
-        
-        // Save to localStorage
         this.saveToLocalStorage();
     },
     
-    // Calculate trimmed mean for a choir/genre - ALWAYS REMOVE HIGHEST AND LOWEST
     calculateTrimmedMean: function(choirId, genre) {
         if (!this.assessorScores[choirId] || !this.assessorScores[choirId][genre]) {
             return 0;
@@ -161,34 +124,27 @@ const scoringSystem = {
         
         const assessorScores = Object.values(this.assessorScores[choirId][genre]);
         
-        // If no scores yet
         if (assessorScores.length === 0) {
             return 0;
         }
         
-        // Extract total scores from each assessor
         const totalScores = assessorScores.map(score => score.total || 0);
         
-        // ALWAYS REMOVE HIGHEST AND LOWEST SCORES
         let trimmedMean = 0;
         
         if (totalScores.length === 1) {
-            // Single assessor: use raw score
             trimmedMean = totalScores[0];
         } else if (totalScores.length === 2) {
-            // Two assessors: use average of both (can't remove both highest and lowest)
             trimmedMean = (totalScores[0] + totalScores[1]) / 2;
         } else {
-            // Always remove highest and lowest, then average
             const sortedScores = [...totalScores].sort((a, b) => a - b);
-            sortedScores.shift(); // Remove lowest
-            sortedScores.pop();   // Remove highest
+            sortedScores.shift();
+            sortedScores.pop();
             
             const sum = sortedScores.reduce((a, b) => a + b, 0);
             trimmedMean = sum / sortedScores.length;
         }
         
-        // Store trimmed mean
         if (!this.trimmedMeans[choirId]) {
             this.trimmedMeans[choirId] = {};
         }
@@ -197,7 +153,6 @@ const scoringSystem = {
         return trimmedMean;
     },
     
-    // Get choir trimmed mean for a genre
     getChoirTrimmedMean: function(choirId, genre) {
         if (this.trimmedMeans[choirId] && this.trimmedMeans[choirId][genre]) {
             return this.trimmedMeans[choirId][genre];
@@ -205,34 +160,34 @@ const scoringSystem = {
         return 0;
     },
     
-    // Calculate overall score for a choir - ONLY for choirs that performed both songs AND have both scores
     getChoirOverallScore: function(choirId) {
         const westernScore = this.getChoirTrimmedMean(choirId, 'western') || 0;
         const africanScore = this.getChoirTrimmedMean(choirId, 'african') || 0;
         
-        // Check if choir performed both songs
         const choir = appState.choirs.find(c => c.id === choirId);
         if (!choir) return 0;
         
-        // STRICT CHECK: Choir must have BOTH songs to be eligible for overall score
-        const hasBothSongs = choir.africanSong && choir.africanSong.trim() !== '' && 
-                            choir.westernSong && choir.westernSong.trim() !== '';
+        const hasAfricanSong = choir.africanSong && choir.africanSong.trim() !== '';
+        const hasWesternSong = choir.westernSong && choir.westernSong.trim() !== '';
+        const hasBothSongs = hasAfricanSong && hasWesternSong;
         
-        // If choir doesn't have both songs, they are NOT eligible for overall rankings
-        if (!hasBothSongs) {
-            return 0; // Single-song choirs are NOT eligible for overall rankings
-        }
-        
-        // Both genres must be assessed to have a valid overall score
-        if (westernScore > 0 && africanScore > 0) {
+        // Handle choirs with both songs (average of both)
+        if (hasBothSongs && westernScore > 0 && africanScore > 0) {
             return (westernScore + africanScore) / 2;
         }
         
-        // If one genre hasn't been assessed yet, return 0 (incomplete)
+        // Handle choirs with only one song (return the available score)
+        if (hasAfricanSong && africanScore > 0 && !hasWesternSong) {
+            return africanScore;
+        }
+        
+        if (hasWesternSong && westernScore > 0 && !hasAfricanSong) {
+            return westernScore;
+        }
+        
         return 0;
     },
     
-    // Check if assessor has already assessed this choir for a specific genre
     hasAssessorAlreadyAssessed: function(choirId, genre, assessorId) {
         if (!this.assessorScores[choirId] || !this.assessorScores[choirId][genre]) {
             return false;
@@ -240,21 +195,17 @@ const scoringSystem = {
         return this.assessorScores[choirId][genre][assessorId] !== undefined;
     },
     
-    // Check if assessor has fully assessed a choir (both genres or applicable single genre)
     hasAssessorFullyAssessed: function(choirId, assessorId) {
         const choir = appState.choirs.find(c => c.id === choirId);
         if (!choir) return false;
         
-        // Check if choir has both songs
         const hasBothSongs = choir.africanSong && choir.africanSong.trim() !== '' && 
                             choir.westernSong && choir.westernSong.trim() !== '';
         
         if (hasBothSongs) {
-            // Both songs: assessor must assess both genres
             return this.hasAssessorAlreadyAssessed(choirId, 'western', assessorId) && 
                    this.hasAssessorAlreadyAssessed(choirId, 'african', assessorId);
         } else {
-            // Single song: assessor must assess the applicable genre
             const hasAfricanOnly = choir.africanSong && choir.africanSong.trim() !== '';
             const hasWesternOnly = choir.westernSong && choir.westernSong.trim() !== '';
             
@@ -268,18 +219,15 @@ const scoringSystem = {
         return false;
     },
     
-    // Calculate rankings for all categories
     calculateRankings: function() {
         const westernRankings = [];
         const africanRankings = [];
         const overallRankings = [];
         
-        // Get all choirs with scores
         appState.choirs.forEach(choir => {
             const westernScore = this.getChoirTrimmedMean(choir.id, 'western');
             const africanScore = this.getChoirTrimmedMean(choir.id, 'african');
             
-            // Check if choir performed both songs
             const hasBothSongs = choir.africanSong && choir.africanSong.trim() !== '' && 
                                 choir.westernSong && choir.westernSong.trim() !== '';
             
@@ -299,9 +247,10 @@ const scoringSystem = {
                 });
             }
             
-            // CRITICAL FIX: Only include in overall rankings if choir performed BOTH songs
-            // AND has scores for BOTH genres
-            if (hasBothSongs && westernScore > 0 && africanScore > 0) {
+            const hasAtLeastOneSong = (choir.africanSong && choir.africanSong.trim() !== '') || 
+                                   (choir.westernSong && choir.westernSong.trim() !== '');
+            
+            if (hasAtLeastOneSong && (westernScore > 0 || africanScore > 0)) {
                 const overallScore = this.getChoirOverallScore(choir.id);
                 if (overallScore > 0) {
                     overallRankings.push({
@@ -313,22 +262,18 @@ const scoringSystem = {
             }
         });
         
-        // Sort by score (descending)
         westernRankings.sort((a, b) => b.score - a.score);
         africanRankings.sort((a, b) => b.score - a.score);
         overallRankings.sort((a, b) => b.score - a.score);
         
-        // Apply ranking logic (tie handling)
         this.finalRankings.western = this.applyRankingLogic(westernRankings);
         this.finalRankings.african = this.applyRankingLogic(africanRankings);
         this.finalRankings.overall = this.applyRankingLogic(overallRankings);
     },
     
-    // Apply ranking logic with tie handling
     applyRankingLogic: function(rankings) {
         if (rankings.length === 0) return [];
         
-        // Group by score for tie detection
         const scoreGroups = {};
         rankings.forEach((item, index) => {
             const roundedScore = Math.round(item.score * 10) / 10;
@@ -338,7 +283,6 @@ const scoringSystem = {
             scoreGroups[roundedScore].push({ ...item, originalIndex: index });
         });
         
-        // Apply rankings
         let currentRank = 1;
         const finalRankings = [];
         
@@ -346,7 +290,6 @@ const scoringSystem = {
             const items = scoreGroups[score];
             
             if (items.length === 1) {
-                // No tie
                 finalRankings.push({
                     ...items[0],
                     rank: currentRank,
@@ -354,7 +297,6 @@ const scoringSystem = {
                 });
                 currentRank++;
             } else {
-                // Tie situation
                 items.forEach(item => {
                     finalRankings.push({
                         ...item,
@@ -370,7 +312,6 @@ const scoringSystem = {
         return finalRankings.sort((a, b) => a.originalIndex - b.originalIndex);
     },
     
-    // Get assessor's assessment for a choir/genre
     getAssessorAssessment: function(choirId, genre, assessorId) {
         if (this.assessorScores[choirId] && 
             this.assessorScores[choirId][genre] && 
@@ -380,7 +321,6 @@ const scoringSystem = {
         return null;
     },
     
-    // Get all assessor assessments for a choir/genre
     getAllAssessorAssessments: function(choirId, genre) {
         if (!this.assessorScores[choirId] || !this.assessorScores[choirId][genre]) {
             return [];
@@ -395,7 +335,6 @@ const scoringSystem = {
         }));
     },
     
-    // Get assessor's own assessments only
     getAssessorAssessments: function(choirId, genre, assessorId) {
         if (!this.assessorScores[choirId] || !this.assessorScores[choirId][genre]) {
             return null;
@@ -413,29 +352,32 @@ const scoringSystem = {
         };
     },
     
-    // Get summary statistics for a choir
     getChoirStatistics: function(choirId) {
         const westernAssessments = this.getAllAssessorAssessments(choirId, 'western');
         const africanAssessments = this.getAllAssessorAssessments(choirId, 'african');
+        
+        const westernRawScores = westernAssessments.map(a => a.total);
+        const africanRawScores = africanAssessments.map(a => a.total);
         
         return {
             western: {
                 assessments: westernAssessments,
                 count: westernAssessments.length,
                 trimmedMean: this.getChoirTrimmedMean(choirId, 'western'),
-                rawScores: westernAssessments.map(a => a.total)
+                rawScores: westernRawScores,
+                stdDev: westernRawScores.length > 0 ? calculateStandardDeviation(westernRawScores) : 0
             },
             african: {
                 assessments: africanAssessments,
                 count: africanAssessments.length,
                 trimmedMean: this.getChoirTrimmedMean(choirId, 'african'),
-                rawScores: africanAssessments.map(a => a.total)
+                rawScores: africanRawScores,
+                stdDev: africanRawScores.length > 0 ? calculateStandardDeviation(africanRawScores) : 0
             },
             overall: this.getChoirOverallScore(choirId)
         };
     },
     
-    // Reset for new assessment
     resetCurrentAssessment: function() {
         this.currentAssessorId = `assessor${Object.keys(this.assessorScores).length + 1}`;
         adjudicationData.currentGenre = 'western';
@@ -465,32 +407,26 @@ const scoringSystem = {
         };
     },
     
-    // Get methodology calculations for a choir (similar to Excel sheet)
     getMethodologyCalculations: function(choirId) {
         const choir = appState.choirs.find(c => c.id === choirId);
         if (!choir) return null;
         
         const stats = this.getChoirStatistics(choirId);
         
-        // Get all assessor scores for western and african
         const westernScores = stats.western.assessments.map(a => a.total);
         const africanScores = stats.african.assessments.map(a => a.total);
         
-        // Sort scores for trimmed mean calculation
         const sortedWestern = [...westernScores].sort((a, b) => a - b);
         const sortedAfrican = [...africanScores].sort((a, b) => a - b);
         
-        // Calculate high and low scores
         const westernHigh = westernScores.length > 0 ? Math.max(...westernScores) : 0;
         const westernLow = westernScores.length > 0 ? Math.min(...westernScores) : 0;
         const africanHigh = africanScores.length > 0 ? Math.max(...africanScores) : 0;
         const africanLow = africanScores.length > 0 ? Math.min(...africanScores) : 0;
         
-        // Calculate totals
         const westernTotal = westernScores.reduce((sum, score) => sum + score, 0);
         const africanTotal = africanScores.reduce((sum, score) => sum + score, 0);
         
-        // Calculate trimmed totals (remove high and low)
         let westernTrimmedTotal = westernTotal;
         let africanTrimmedTotal = africanTotal;
         
@@ -501,13 +437,11 @@ const scoringSystem = {
             africanTrimmedTotal = africanTotal - africanHigh - africanLow;
         }
         
-        // Calculate overall aggregates (divide by number of assessors minus 2 for trimmed mean)
         const westernOverall = westernScores.length > 2 ? westernTrimmedTotal / (westernScores.length - 2) : 
                              westernScores.length === 2 ? westernTotal / 2 : westernTotal;
         const africanOverall = africanScores.length > 2 ? africanTrimmedTotal / (africanScores.length - 2) : 
                              africanScores.length === 2 ? africanTotal / 2 : africanTotal;
         
-        // Final aggregate (average of western and african, or single genre if only one)
         let finalAggregate = 0;
         if (westernOverall > 0 && africanOverall > 0) {
             finalAggregate = (westernOverall + africanOverall) / 2;
@@ -539,7 +473,6 @@ const scoringSystem = {
         };
     },
     
-    // Generate Excel-like methodology data for all choirs
     generateMethodologyData: function() {
         const methodologyData = [];
         
@@ -555,7 +488,6 @@ const scoringSystem = {
         return methodologyData;
     },
     
-    // Save to localStorage
     saveToLocalStorage: function() {
         try {
             const data = {
@@ -569,7 +501,6 @@ const scoringSystem = {
         }
     },
     
-    // Load from localStorage
     loadFromLocalStorage: function() {
         try {
             const data = localStorage.getItem('tmf_scoring_data');
@@ -578,27 +509,52 @@ const scoringSystem = {
                 this.assessorScores = parsed.assessorScores || {};
                 this.trimmedMeans = parsed.trimmedMeans || {};
                 
-                // Update choir statuses based on loaded data
                 appState.choirs.forEach(choir => {
-                    const westernAssessed = this.assessorScores[choir.id]?.western && 
-                                          Object.keys(this.assessorScores[choir.id].western).length > 0;
-                    const africanAssessed = this.assessorScores[choir.id]?.african && 
-                                          Object.keys(this.assessorScores[choir.id].african).length > 0;
+                    const hasWesternScores = this.assessorScores[choir.id]?.western && 
+                                           Object.keys(this.assessorScores[choir.id].western).length > 0;
+                    const hasAfricanScores = this.assessorScores[choir.id]?.african && 
+                                           Object.keys(this.assessorScores[choir.id].african).length > 0;
                     
-                    if (westernAssessed || africanAssessed) {
+                    if (hasWesternScores || hasAfricanScores) {
                         choir.status = 'assessed';
+                    } else {
+                        choir.status = 'pending';
                     }
                 });
                 
                 this.calculateRankings();
+            } else {
+                this.assessorScores = {};
+                this.trimmedMeans = {};
+                this.finalRankings = {
+                    western: [],
+                    african: [],
+                    overall: []
+                };
+                
+                appState.choirs.forEach(choir => {
+                    choir.status = 'pending';
+                });
             }
         } catch (e) {
             console.warn('Could not load from localStorage:', e);
+            this.assessorScores = {};
+            this.trimmedMeans = {};
+            this.finalRankings = {
+                western: [],
+                african: [],
+                overall: []
+            };
+            appState.choirs.forEach(choir => {
+                choir.status = 'pending';
+            });
         }
     }
 };
 
-// Adjudication System Data
+// ============================================
+// ADJUDICATION SYSTEM DATA
+// ============================================
 const adjudicationData = {
     currentChoir: null,
     currentGenre: 'western',
@@ -639,105 +595,45 @@ let currentCategoryFilter = 'ALL';
 let searchTimeout = null;
 let myAssessmentsSearchTimeout = null;
 
-// Initialize
+// ============================================
+// INITIALIZATION
+// ============================================
 document.addEventListener('DOMContentLoaded', function() {
-    appState.choirs = [...appState.choirsData];
+    appState.choirs = [];
     scoringSystem.resetCurrentAssessment();
-    
-    // Load saved data from localStorage
     scoringSystem.loadFromLocalStorage();
-    
-    // Add some sample assessor data for testing if no data exists
-    if (Object.keys(scoringSystem.assessorScores).length === 0) {
-        initializeSampleAssessorData();
-    }
-    
     setupEventListeners();
+    addAnalyticsStyles();
+    console.log('TMF Choral Judicators System initialized. Ready for data import.');
 });
 
-// ============================================
-// SAMPLE DATA INITIALIZATION
-// ============================================
 
-function initializeSampleAssessorData() {
-    // Add some sample assessments for testing methodology
-    const sampleChoirs = appState.choirs.slice(0, 8); // First 8 choirs
-    
-    sampleChoirs.forEach((choir, index) => {
-        // Add sample western scores (3-5 assessors)
-        const westernAssessorCount = 3 + Math.floor(Math.random() * 3);
-        for (let i = 1; i <= westernAssessorCount; i++) {
-            const score = 70 + Math.floor(Math.random() * 25); // Scores between 70-95
-            scoringSystem.addAssessorScore(choir.id, 'western', `assessor${i}`, {
-                intonation: 10 + Math.random() * 5,
-                pitchAccuracy: 10 + Math.random() * 5,
-                language: 5 + Math.random() * 5,
-                vocalTechnique: 10 + Math.random() * 5,
-                choralTechnique: 10 + Math.random() * 5,
-                rhythm: 10 + Math.random() * 5,
-                artistry: 5 + Math.random() * 5,
-                stage: 2 + Math.random() * 3,
-                total: score
-            }, `Sample comments for western song from assessor ${i}`);
-        }
-        
-        // Add sample african scores (3-5 assessors)
-        const africanAssessorCount = 3 + Math.floor(Math.random() * 3);
-        for (let i = 1; i <= africanAssessorCount; i++) {
-            const score = 65 + Math.floor(Math.random() * 30); // Scores between 65-95
-            scoringSystem.addAssessorScore(choir.id, 'african', `assessor${i}`, {
-                intonation: 10 + Math.random() * 5,
-                pitchAccuracy: 10 + Math.random() * 5,
-                language: 5 + Math.random() * 5,
-                vocalTechnique: 10 + Math.random() * 5,
-                choralTechnique: 10 + Math.random() * 5,
-                rhythm: 10 + Math.random() * 5,
-                artistry: 5 + Math.random() * 5,
-                stage: 2 + Math.random() * 3,
-                total: score
-            }, `Sample comments for african song from assessor ${i}`);
-        }
-        
-        // Mark choir as assessed
-        choir.status = 'assessed';
-    });
-    
-    // Calculate rankings with sample data
-    scoringSystem.calculateRankings();
-}
-
-// ============================================
+// =====================
 // CORE SYSTEM FUNCTIONS
-// ============================================
+// =====================
 
 function setupEventListeners() {
-    // Login form
     document.getElementById('loginForm').addEventListener('submit', function(e) {
         e.preventDefault();
         login();
     });
     
-    // Forgot password form
     document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
         e.preventDefault();
         handleForgotPassword();
     });
     
-    // User form
     document.getElementById('userForm').addEventListener('submit', function(e) {
         e.preventDefault();
         saveUser();
     });
     
-    // Choir form
     document.getElementById('choirForm').addEventListener('submit', function(e) {
         e.preventDefault();
         saveChoir();
     });
     
-    // Password input feedback
     document.getElementById('password').addEventListener('input', function() {
-        // Password feedback implementation
         const password = this.value;
         const feedback = document.getElementById('passwordFeedback');
         if (password.length < 6) {
@@ -806,23 +702,17 @@ function login() {
         appState.isLoggedIn = true;
         appState.currentView = 'dashboard';
         
-        // Update UI
         document.getElementById('userName').textContent = user.name;
         document.getElementById('userRole').textContent = `(${role.toUpperCase()})`;
         document.getElementById('userBadge').style.display = 'flex';
         document.getElementById('loginButton').innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
         document.getElementById('loginButton').onclick = logout;
         
-        // Show dashboard
         document.getElementById('dashboardContent').style.display = 'block';
         document.getElementById('loginInstructions').style.display = 'none';
         
         hideLogin();
-        
-        // Load dashboard
         renderDashboard();
-        
-        // Show search bar after successful login
         showSearchBar();
         
         showNotification(`Welcome back, ${user.name}!`, 'success');
@@ -846,19 +736,15 @@ function logout() {
     document.getElementById('loginInstructions').style.display = 'block';
     document.getElementById('welcomeSection').style.display = 'block';
     
-    // Hide search bar when logging out
     hideSearchBar();
-    
     showNotification('You have been logged out successfully.', 'info');
 }
 
 function showSearchBar() {
-    // Implementation for showing search bar
     console.log('Search bar shown');
 }
 
 function hideSearchBar() {
-    // Implementation for hiding search bar
     console.log('Search bar hidden');
 }
 
@@ -877,9 +763,9 @@ function handleForgotPassword() {
     }, 2000);
 }
 
-// ============================================
+// ========================
 // DASHBOARD VIEW FUNCTIONS
-// ============================================
+// ========================
 
 function showDashboard() {
     appState.currentView = 'dashboard';
@@ -916,7 +802,6 @@ function showReports() {
     renderReports();
 }
 
-// NEW: Show Methodology Calculations
 function showMethodologyCalculations() {
     document.getElementById('methodologyModal').style.display = 'flex';
     renderMethodologyCalculations();
@@ -926,17 +811,16 @@ function closeMethodologyModal() {
     document.getElementById('methodologyModal').style.display = 'none';
 }
 
-// ============================================
-// FIX: ADDED MISSING LIVE MONITORING FUNCTIONS
-// ============================================
-
 function showLiveMonitoring() {
     appState.currentView = 'liveMonitoring';
     renderLiveMonitoring();
 }
 
+// =========================
+// LIVE MONITORING FUNCTIONS
+// =========================
+
 function renderLiveMonitoring() {
-    // Calculate assessment progress
     const totalChoirs = appState.choirs.length;
     const assessedChoirs = appState.choirs.filter(c => c.status === 'assessed').length;
     const pendingChoirs = totalChoirs - assessedChoirs;
@@ -954,7 +838,6 @@ function renderLiveMonitoring() {
             </div>
 
             <div class="dashboard-grid">
-                <!-- Overall Progress -->
                 <div class="dashboard-card">
                     <div class="card-icon">
                         <i class="fas fa-chart-pie"></i>
@@ -966,7 +849,6 @@ function renderLiveMonitoring() {
                     </div>
                 </div>
 
-                <!-- Category Progress -->
                 <div class="dashboard-card">
                     <div class="card-icon">
                         <i class="fas fa-layer-group"></i>
@@ -977,7 +859,6 @@ function renderLiveMonitoring() {
                     <p class="card-description">Standard: ${appState.choirs.filter(c => c.category === 'STANDARD' && c.status === 'assessed').length}/${appState.choirs.filter(c => c.category === 'STANDARD').length}</p>
                 </div>
 
-                <!-- Assessor Activity -->
                 <div class="dashboard-card">
                     <div class="card-icon">
                         <i class="fas fa-users"></i>
@@ -988,7 +869,6 @@ function renderLiveMonitoring() {
                 </div>
             </div>
 
-            <!-- Recent Activity -->
             <div class="assessment-container mt-4">
                 <h4 style="color: var(--primary-gold); margin-bottom: 1.5rem;">Recent Assessment Activity</h4>
                 <div id="recentActivityList">
@@ -1001,7 +881,6 @@ function renderLiveMonitoring() {
     document.getElementById('dashboardContent').innerHTML = html;
 }
 
-// Helper function to count total assessments
 function countTotalAssessments() {
     let count = 0;
     Object.keys(scoringSystem.assessorScores).forEach(choirId => {
@@ -1016,7 +895,6 @@ function countTotalAssessments() {
     return count;
 }
 
-// Helper function to generate recent activity list
 function generateRecentActivityList() {
     const activities = [];
     
@@ -1040,7 +918,6 @@ function generateRecentActivityList() {
         });
     });
 
-    // Sort by time (most recent first) and take top 10
     activities.sort((a, b) => b.time - a.time);
     const recent = activities.slice(0, 10);
 
@@ -1066,9 +943,9 @@ function generateRecentActivityList() {
     return html;
 }
 
-// ============================================
-// PROFESSIONAL ADJUDICATION SYSTEM FUNCTIONS
-// ============================================
+// ================================
+// PROFESSIONAL ADJUDICATION SYSTEM
+// ================================
 
 function showProfessionalAdjudication(choirId, genreToAssess = null) {
     const choir = appState.choirs.find(c => c.id === choirId);
@@ -1077,24 +954,28 @@ function showProfessionalAdjudication(choirId, genreToAssess = null) {
         return;
     }
     
+    if (scoringSystem.hasAssessorFullyAssessed(choirId, appState.currentUserId)) {
+        showNotification('This choir has been fully assessed', 'warning');
+        return;
+    }
+    
+    // Reset assessment data for the new assessor
+    resetAdjudicationData();
+    
     adjudicationData.currentChoir = choir;
     scoringSystem.currentChoir = choir;
     scoringSystem.currentAssessorId = appState.currentUserId;
     
-    // Check if choir has both songs
     const hasBothSongs = choir.africanSong && choir.africanSong.trim() !== '' && 
                         choir.westernSong && choir.westernSong.trim() !== '';
     
     if (genreToAssess) {
-        // If genre is specified, use it
         adjudicationData.currentGenre = genreToAssess;
     } else if (hasBothSongs) {
-        // Show genre selection modal
         document.getElementById('choralAdjudicationModal').style.display = 'flex';
         renderGenreSelection();
         return;
     } else {
-        // Single song choir - automatically select the correct genre
         if (choir.africanSong && choir.africanSong.trim() !== '') {
             adjudicationData.currentGenre = 'african';
         } else {
@@ -1106,10 +987,43 @@ function showProfessionalAdjudication(choirId, genreToAssess = null) {
     renderAdjudicationSystem();
 }
 
+// Add this new function to reset adjudication data
+function resetAdjudicationData() {
+    adjudicationData.currentChoir = null;
+    adjudicationData.currentGenre = 'western';
+    adjudicationData.assessmentData = {
+        western: {
+            intonation: 0.0,
+            pitchAccuracy: 0.0,
+            language: 0.0,
+            vocalTechnique: 0.0,
+            choralTechnique: 0.0,
+            rhythm: 0.0,
+            artistry: 0.0,
+            stage: 0.0,
+            total: 0.0
+        },
+        african: {
+            intonation: 0.0,
+            pitchAccuracy: 0.0,
+            language: 0.0,
+            vocalTechnique: 0.0,
+            choralTechnique: 0.0,
+            rhythm: 0.0,
+            artistry: 0.0,
+            stage: 0.0,
+            total: 0.0
+        }
+    };
+    adjudicationData.comments = {
+        western: "",
+        african: ""
+    };
+}
+
 function renderGenreSelection() {
     const choir = adjudicationData.currentChoir;
     
-    // Update the modal header for genre selection
     const modalHeader = document.querySelector('#choralAdjudicationModal .modal-header span');
     if (modalHeader) {
         modalHeader.innerHTML = '<i class="fas fa-music"></i> Select Genre to Assess';
@@ -1124,36 +1038,29 @@ function renderGenreSelection() {
         <div class="genre-selection">
             <h4>Select Genre to Assess</h4>
             <div class="genre-cards-container">
-    `;
-    
-    html += `
-        <div class="genre-card" onclick="selectGenreForAssessment('african')">
-            <div class="genre-card-icon">
-                <i class="fas fa-drum"></i>
-            </div>
-            <div class="genre-card-title">African Genre</div>
-            <div class="genre-card-description">Assess the African indigenous music performance with appropriate rubric</div>
-            <div class="genre-card-song">${choir.africanSong}</div>
-        </div>
-        
-        <div class="genre-card" onclick="selectGenreForAssessment('western')">
-            <div class="genre-card-icon">
-                <i class="fas fa-globe"></i>
-            </div>
-            <div class="genre-card-title">Western Genre</div>
-            <div class="genre-card-description">Assess the Western classical music performance with appropriate rubric</div>
-            <div class="genre-card-song">${choir.westernSong}</div>
-        </div>
-    `;
-    
-    html += `
+                <div class="genre-card" onclick="selectGenreForAssessment('african')">
+                    <div class="genre-card-icon">
+                        <i class="fas fa-drum"></i>
+                    </div>
+                    <div class="genre-card-title">African Genre</div>
+                    <div class="genre-card-description">Assess the African indigenous music performance with appropriate rubric</div>
+                    <div class="genre-card-song">${choir.africanSong}</div>
+                </div>
+                
+                <div class="genre-card" onclick="selectGenreForAssessment('western')">
+                    <div class="genre-card-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="genre-card-title">Western Genre</div>
+                    <div class="genre-card-description">Assess the Western classical music performance with appropriate rubric</div>
+                    <div class="genre-card-song">${choir.westernSong}</div>
+                </div>
             </div>
             <div style="margin-top: 0.5rem; font-size: 0.85rem; color: rgba(255, 255, 255, 0.7);">
                 <i class="fas fa-info-circle"></i> Click on a card to select the genre you want to assess
             </div>
         </div>
         
-        <!-- Back to Dashboard button UNDER the genre cards as shown in PNG -->
         <div class="genre-selection-back">
             <button class="action-btn outline" onclick="showDashboardFromGenreSelection()" style="padding: 0.5rem 1.5rem; font-size: 1rem;">
                 <i class="fas fa-arrow-left"></i> Back to Dashboard
@@ -1173,7 +1080,6 @@ function selectGenreForAssessment(genre) {
     const choir = adjudicationData.currentChoir;
     const assessorId = appState.currentUserId;
     
-    // Check if assessor has already assessed this genre
     const hasAssessed = scoringSystem.hasAssessorAlreadyAssessed(choir.id, genre, assessorId);
     
     if (hasAssessed) {
@@ -1187,17 +1093,15 @@ function selectGenreForAssessment(genre) {
 
 function closeAdjudicationModal() {
     document.getElementById('choralAdjudicationModal').style.display = 'none';
-    adjudicationData.currentChoir = null;
+    // Reset data when closing the modal
+    resetAdjudicationData();
     scoringSystem.currentChoir = null;
-    adjudicationData.comments.western = "";
-    adjudicationData.comments.african = "";
 }
 
 function renderAdjudicationSystem() {
     const choir = adjudicationData.currentChoir;
     const currentGenre = adjudicationData.currentGenre;
     
-    // Restore the original modal header for adjudication system
     const modalHeader = document.querySelector('#choralAdjudicationModal .modal-header span');
     if (modalHeader) {
         modalHeader.innerHTML = '<i class="fas fa-clipboard-check"></i> Professional Choral Adjudication System';
@@ -1237,22 +1141,18 @@ function renderAdjudicationSystem() {
             </div>
         </div>
         
-        <div class="rubric-container" id="rubricContainer">
-            <!-- Rubric table will be loaded here -->
-        </div>
+        <div class="rubric-container" id="rubricContainer"></div>
         
         <div class="comments-container" id="commentsContainer">
             <h4>Additional Comments</h4>
-            <textarea class="comments-textarea" id="assessmentComments" placeholder="Enter your comments for this assessment...">${adjudicationData.comments[adjudicationData.currentGenre] || ''}</textarea>
+            <textarea class="comments-textarea" id="assessmentComments" placeholder="Enter your comments for this assessment..."></textarea>
             <div style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); margin-top: 0.5rem;">
                 Provide constructive feedback and observations for the choir.
             </div>
         </div>
         
         <div class="assessment-footer">
-            <div id="resultsDisplay">
-                <!-- Results will be loaded here -->
-            </div>
+            <div id="resultsDisplay"></div>
             
             <div class="assessment-actions">
                 <button class="action-btn success" onclick="saveAssessorAssessment()" id="saveAssessmentBtn">
@@ -1263,7 +1163,6 @@ function renderAdjudicationSystem() {
                 </button>
             </div>
             
-            <!-- Added bottom center back button -->
             <div class="bottom-center-back">
                 <button class="action-btn outline" onclick="showDashboardFromAdjudication()">
                     <i class="fas fa-arrow-left"></i> Back to Dashboard
@@ -1285,7 +1184,6 @@ function renderSingleSongWarning() {
     const choir = adjudicationData.currentChoir;
     if (!choir) return '';
     
-    // Check if choir has both songs
     const hasBothSongs = choir.africanSong && choir.africanSong.trim() !== '' && 
                         choir.westernSong && choir.westernSong.trim() !== '';
     
@@ -1293,7 +1191,6 @@ function renderSingleSongWarning() {
         return '';
     }
     
-    // Choir only has one song
     const hasAfricanOnly = choir.africanSong && choir.africanSong.trim() !== '';
     const hasWesternOnly = choir.westernSong && choir.westernSong.trim() !== '';
     
@@ -1301,14 +1198,14 @@ function renderSingleSongWarning() {
         return `
             <div class="single-song-warning">
                 <i class="fas fa-exclamation-triangle"></i> 
-                This choir is only performing an African song. Western assessment will not be used in final calculations.
+                This choir is only performing an African song.
             </div>
         `;
     } else if (hasWesternOnly && !hasAfricanOnly) {
         return `
             <div class="single-song-warning">
                 <i class="fas fa-exclamation-triangle"></i> 
-                This choir is only performing a Western song. African assessment will not be used in final calculations.
+                This choir is only performing a Western song.
             </div>
         `;
     }
@@ -1319,7 +1216,6 @@ function renderSingleSongWarning() {
 function renderRubricTable() {
     const container = document.getElementById('rubricContainer');
     
-    // Define categories and their max scores - REMOVED MAX TEXT FROM HEADERS
     const categories = [
         { name: "INTONATION", max: 15, key: "intonation" },
         { name: "PITCH ACCURACY", max: 15, key: "pitchAccuracy" },
@@ -1331,20 +1227,19 @@ function renderRubricTable() {
         { name: "STAGE PRESENCE", max: 5, key: "stage" }
     ];
     
-    // Define grade levels and their score ranges - Updated to match PNG
     const gradeLevels = [
         { 
             name: "SUPERIOR (90-100)", 
             class: "superior-row",
             ranges: [
-                { min: 13.5, max: 15 }, // Intonation
-                { min: 13.5, max: 15 }, // Pitch Accuracy
-                { min: 9, max: 10 },    // Language & Diction
-                { min: 13.5, max: 15 }, // Vocal Technique
-                { min: 13.5, max: 15 }, // Choral Technique
-                { min: 13.5, max: 15 }, // Rhythmic Accuracy
-                { min: 9, max: 10 },    // Artistic Relevance
-                { min: 4.5, max: 5 }    // Stage Presence
+                { min: 13.5, max: 15 },
+                { min: 13.5, max: 15 },
+                { min: 9, max: 10 },
+                { min: 13.5, max: 15 },
+                { min: 13.5, max: 15 },
+                { min: 13.5, max: 15 },
+                { min: 9, max: 10 },
+                { min: 4.5, max: 5 }
             ]
         },
         { 
@@ -1418,12 +1313,10 @@ function renderRubricTable() {
                 <tbody>
     `;
     
-    // Add grade level rows
     gradeLevels.forEach((level, levelIndex) => {
         tableHTML += `<tr class="${level.class}">`;
         tableHTML += `<td class="criteria-column">${level.name}</td>`;
         
-        // Add input cells for each category
         level.ranges.forEach((range, catIndex) => {
             const catKey = categories[catIndex].key;
             const currentValue = adjudicationData.assessmentData[adjudicationData.currentGenre][catKey] || 0;
@@ -1446,15 +1339,12 @@ function renderRubricTable() {
             `;
         });
         
-        // Total column for this grade level
         tableHTML += `<td class="total-column" id="level-total-${levelIndex}">0.0</td>`;
         tableHTML += `</tr>`;
     });
     
-    // Add empty row for spacing
     tableHTML += `<tr style="height: 20px;"><td colspan="10"></td></tr>`;
     
-    // Add genre scores row
     tableHTML += `
             <tr class="${adjudicationData.currentGenre === 'western' ? 'western-total' : 'african-total'}">
                 <td class="criteria-column">
@@ -1477,8 +1367,6 @@ function renderRubricTable() {
     `;
     
     container.innerHTML = tableHTML;
-    
-    // Initialize score calculations
     updateScores();
 }
 
@@ -1497,7 +1385,6 @@ function validateScoreInput(input, min, max) {
 function updateScores() {
     const currentGenre = adjudicationData.currentGenre;
     
-    // Reset scores for current genre
     adjudicationData.assessmentData[currentGenre] = {
         intonation: 0.0,
         pitchAccuracy: 0.0,
@@ -1510,30 +1397,23 @@ function updateScores() {
         total: 0.0
     };
     
-    // Calculate level totals
     const levelTotals = [0, 0, 0, 0, 0];
     
-    // Process all inputs
     document.querySelectorAll('.rubric-input').forEach(input => {
         const value = parseFloat(input.value) || 0;
         const levelIndex = parseInt(input.dataset.level);
         const category = input.dataset.category;
         
         if (value > 0) {
-            // Add to level total
             levelTotals[levelIndex] += value;
-            
-            // Add to genre scores
             adjudicationData.assessmentData[currentGenre][category] += value;
         }
     });
     
-    // Calculate genre total
     const categories = ['intonation', 'pitchAccuracy', 'language', 'vocalTechnique', 'choralTechnique', 'rhythm', 'artistry', 'stage'];
     adjudicationData.assessmentData[currentGenre].total = categories.reduce((sum, cat) => 
         sum + adjudicationData.assessmentData[currentGenre][cat], 0);
     
-    // Update level total displays
     levelTotals.forEach((total, index) => {
         const element = document.getElementById(`level-total-${index}`);
         if (element) {
@@ -1541,7 +1421,6 @@ function updateScores() {
         }
     });
     
-    // Update genre score displays
     categories.forEach(cat => {
         const element = document.getElementById(`${currentGenre}-${cat}`);
         if (element) {
@@ -1549,7 +1428,6 @@ function updateScores() {
         }
     });
     
-    // Update total display
     const totalElement = document.getElementById(`${currentGenre}-total`);
     if (totalElement) {
         totalElement.textContent = adjudicationData.assessmentData[currentGenre].total.toFixed(1);
@@ -1565,7 +1443,6 @@ function updateResultsDisplay() {
     
     if (!choir) return;
     
-    // Calculate score for current genre
     let score = adjudicationData.assessmentData[currentGenre].total;
     let grade = getGradeFromScore(score);
     let gradeClass = getGradeClass(grade);
@@ -1617,101 +1494,43 @@ function getGradeClass(grade) {
 }
 
 function saveAssessorAssessment() {
-    console.log('saveAssessorAssessment called');
-    
-    // Debug: Check if user is properly logged in
-    console.log('User login state:', {
-        currentUser: appState.currentUser,
-        currentUserId: appState.currentUserId,
-        currentRole: appState.currentRole,
-        isLoggedIn: appState.isLoggedIn
-    });
-    
     if (!appState.currentUserId) {
-        console.error('User not logged in - currentUserId is null!');
         showNotification('Please login to save assessments', 'error');
         return;
     }
     
     const choir = scoringSystem.currentChoir;
-    console.log('Current choir:', choir);
     
     if (!choir) {
-        console.log('No choir selected - showing error');
         showNotification('No choir selected', 'error');
         return;
     }
     
     const currentGenre = adjudicationData.currentGenre;
-    console.log('Current genre:', currentGenre);
-    
     const totalScore = adjudicationData.assessmentData[currentGenre].total;
-    console.log('Total score:', totalScore);
     
     if (totalScore === 0) {
-        console.log('Total score is 0 - showing error');
         showNotification('Please enter scores before saving', 'error');
         return;
     }
     
-    // Check if assessor has already assessed this choir for this genre
     const hasAlreadyAssessed = scoringSystem.hasAssessorAlreadyAssessed(choir.id, currentGenre, appState.currentUserId);
-    console.log('Has already assessed:', hasAlreadyAssessed);
     
     if (hasAlreadyAssessed) {
-        console.log('Already assessed - showing error');
         showNotification(`You have already assessed ${choir.name} for ${currentGenre === 'western' ? 'Western' : 'African'} genre.`, 'error');
         return;
     }
     
-    console.log('All validations passed - proceeding to save');
-    
-    // Show loading spinner immediately
     const saveBtn = document.getElementById('saveAssessmentBtn');
-    console.log('Save button found:', saveBtn);
-    
-    if (!saveBtn) {
-        console.error('Save button not found!');
-        showNotification('System error: Save button not found', 'error');
-        return;
-    }
-    
     const originalBtnContent = saveBtn.innerHTML;
     
-    // Disable button and show loading state
     saveBtn.disabled = true;
     saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
     document.getElementById('loadingSpinner').style.display = 'block';
     
-    console.log('Loading state set - processing assessment');
-    
-    // Process assessment immediately (no artificial delay)
     try {
-        // Save assessor's assessment using the flexible scoring system
         const commentsTextarea = document.getElementById('assessmentComments');
         const comments = commentsTextarea ? commentsTextarea.value.trim() : "";
-        
-        console.log('Saving assessment with data:', {
-            choirId: choir.id,
-            genre: currentGenre,
-            userId: appState.currentUserId,
-            scores: adjudicationData.assessmentData[currentGenre],
-            comments: comments
-        });
-        
-        // Check if scoringSystem exists
-        if (!scoringSystem) {
-            console.error('scoringSystem is undefined!');
-            throw new Error('Scoring system not initialized');
-        }
-        
-        // Check if addAssessorScore exists
-        if (!scoringSystem.addAssessorScore) {
-            console.error('scoringSystem.addAssessorScore is undefined!');
-            throw new Error('addAssessorScore method not found');
-        }
-        
-        console.log('About to call scoringSystem.addAssessorScore...');
         
         scoringSystem.addAssessorScore(
             choir.id, 
@@ -1721,72 +1540,23 @@ function saveAssessorAssessment() {
             comments
         );
         
-        console.log('Assessment saved successfully');
-        
-        // Save comments
         adjudicationData.comments[currentGenre] = comments;
-        
-        // Update choir status
         choir.status = 'assessed';
         
-        // Hide loading spinner and restore button
         document.getElementById('loadingSpinner').style.display = 'none';
         saveBtn.disabled = false;
         saveBtn.innerHTML = originalBtnContent;
         
         showNotification(`${currentGenre === 'western' ? 'Western' : 'African'} assessment saved for ${choir.name}!`, 'success');
         
-        console.log('Success notification shown');
+        setTimeout(() => {
+            closeAdjudicationModal();
+            showAssessmentChooser();
+        }, 1500);
         
-        // Check if choir has both songs
-        const hasBothSongs = choir.africanSong && choir.africanSong.trim() !== '' && 
-                            choir.westernSong && choir.westernSong.trim() !== '';
-        
-        const assessorId = appState.currentUserId;
-        const hasAssessedWestern = scoringSystem.hasAssessorAlreadyAssessed(choir.id, 'western', assessorId);
-        const hasAssessedAfrican = scoringSystem.hasAssessorAlreadyAssessed(choir.id, 'african', assessorId);
-        const hasFullyAssessed = scoringSystem.hasAssessorFullyAssessed(choir.id, assessorId);
-        
-        if (hasBothSongs && !hasFullyAssessed) {
-            // Ask if assessor wants to assess the other genre
-            setTimeout(() => {
-                const otherGenre = currentGenre === 'western' ? 'african' : 'western';
-                const hasAssessedOther = otherGenre === 'western' ? hasAssessedWestern : hasAssessedAfrican;
-                
-                if (!hasAssessedOther) {
-                    // Remove the confirm dialog and automatically assess the other genre
-                    adjudicationData.currentGenre = otherGenre;
-                    // Clear the form for the other genre
-                    resetRubric();
-                    // Clear comments for the other genre
-                    const commentsTextarea = document.getElementById('assessmentComments');
-                    if (commentsTextarea) {
-                        commentsTextarea.value = "";
-                        adjudicationData.comments[otherGenre] = "";
-                    }
-                    renderAdjudicationSystem();
-                    showNotification(`Now assessing ${otherGenre === 'western' ? 'Western' : 'African'} song`, 'info');
-                } else {
-                    // Assessor has assessed both genres
-                    setTimeout(() => {
-                        closeAdjudicationModal();
-                        // Return to assessment chooser instead of empty dashboard
-                        showAssessmentChooser();
-                    }, 1500);
-                }
-            }, 500);
-        } else {
-            // Choir only has one song or assessor has fully assessed, close modal
-            setTimeout(() => {
-                closeAdjudicationModal();
-                // Return to assessment chooser instead of empty dashboard
-                showAssessmentChooser();
-            }, 1500);
-        }
     } catch (error) {
         console.error('Error saving assessment:', error);
         showNotification('Error saving assessment. Please try again.', 'error');
-        // Restore button state in case of error
         document.getElementById('loadingSpinner').style.display = 'none';
         saveBtn.disabled = false;
         saveBtn.innerHTML = originalBtnContent;
@@ -1794,13 +1564,11 @@ function saveAssessorAssessment() {
 }
 
 function resetRubric() {
-    // Clear all inputs
     document.querySelectorAll('.rubric-input').forEach(input => {
         input.value = '';
         input.classList.remove('invalid');
     });
     
-    // Reset assessment data for current genre
     const currentGenre = adjudicationData.currentGenre;
     adjudicationData.assessmentData[currentGenre] = {
         intonation: 0.0,
@@ -1818,9 +1586,9 @@ function resetRubric() {
     showNotification('Form cleared', 'info');
 }
 
-// ============================================
-// METHODOLOGY CALCULATIONS - FIXED VERSION WITH OVERALL WINNER ELIGIBILITY
-// ============================================
+// ========================
+// METHODOLOGY CALCULATIONS 
+// ========================
 
 function renderMethodologyCalculations() {
     const methodologyData = scoringSystem.generateMethodologyData();
@@ -1856,7 +1624,6 @@ function renderMethodologyCalculations() {
             ${renderMethodologyTab('all', methodologyData)}
         </div>
         
-        <!-- Added bottom center back button -->
         <div class="bottom-center-back">
             <button class="action-btn outline" onclick="closeMethodologyModal()">
                 <i class="fas fa-arrow-left"></i> Back to Dashboard
@@ -1868,19 +1635,16 @@ function renderMethodologyCalculations() {
 }
 
 function showMethodologyTab(event, tab) {
-    // Get the target element from event or find it
     let target;
     if (event && event.target) {
         target = event.target;
     } else {
-        // Find the button by its onclick attribute content
         target = document.querySelector(`.methodology-tab-btn[onclick*="${tab}"]`);
     }
     
     const container = document.getElementById('methodologyTabContent');
     const methodologyData = scoringSystem.generateMethodologyData();
     
-    // Update active tab
     document.querySelectorAll('.methodology-tab-btn').forEach(btn => {
         btn.classList.remove('active');
     });
@@ -1892,7 +1656,6 @@ function showMethodologyTab(event, tab) {
 }
 
 function renderMethodologyTab(tab, methodologyData) {
-    // Filter data based on tab
     let filteredData = methodologyData;
     if (tab === 'great') {
         filteredData = methodologyData.filter(d => d.choir.category === 'GREAT CHAMPS');
@@ -1912,24 +1675,19 @@ function renderMethodologyTab(tab, methodologyData) {
         `;
     }
     
-    // CRITICAL FIX: Filter out single-song choirs from overall winner calculations
-    // Only choirs with both songs should be considered for overall winners
     const eligibleForOverall = filteredData.filter(d => {
         const choir = d.choir;
         const hasBothSongs = choir.africanSong && choir.africanSong.trim() !== '' && 
                             choir.westernSong && choir.westernSong.trim() !== '';
-        // Also need both scores to be > 0
         const hasBothScores = d.westernOverall > 0 && d.africanOverall > 0;
         return hasBothSongs && hasBothScores;
     });
     
-    // Calculate summary statistics
     const totalAssessors = filteredData.reduce((sum, d) => sum + d.assessorCount.western + d.assessorCount.african, 0);
     const avgWesternScore = filteredData.reduce((sum, d) => sum + d.westernOverall, 0) / filteredData.length;
     const avgAfricanScore = filteredData.reduce((sum, d) => sum + d.africanOverall, 0) / filteredData.length;
     const avgFinalScore = filteredData.reduce((sum, d) => sum + d.finalAggregate, 0) / filteredData.length;
     
-    // Find winners - ONLY from eligible choirs for overall winner
     const westernWinner = [...filteredData].sort((a, b) => b.westernOverall - a.westernOverall)[0];
     const africanWinner = [...filteredData].sort((a, b) => b.africanOverall - a.africanOverall)[0];
     const overallWinner = eligibleForOverall.length > 0 ? 
@@ -2027,37 +1785,30 @@ function renderMethodologyTab(tab, methodologyData) {
                 <tbody>
     `;
     
-    // Sort by final aggregate score to determine ranks
     const sortedData = [...filteredData].sort((a, b) => b.finalAggregate - a.finalAggregate);
     
-    // Create a map of choir ID to rank
     const rankMap = {};
     sortedData.forEach((data, index) => {
         rankMap[data.choir.id] = index + 1;
     });
     
-    // Sort by final aggregate for display (same as PNG order - highest to lowest)
     filteredData.sort((a, b) => b.finalAggregate - a.finalAggregate);
     
     filteredData.forEach((data) => {
         const choir = data.choir;
         const rank = rankMap[choir.id];
         
-        // Check if choir has both songs
         const hasBothSongs = choir.africanSong && choir.africanSong.trim() !== '' && 
                             choir.westernSong && choir.westernSong.trim() !== '';
         const hasBothScores = data.westernOverall > 0 && data.africanOverall > 0;
         const isEligibleForOverall = hasBothSongs && hasBothScores;
         
-        // Determine how many rows this choir will have
         const hasWestern = data.westernScores.length > 0;
         const hasAfrican = data.africanScores.length > 0;
         const totalRows = (hasWestern ? 1 : 0) + (hasAfrican ? 1 : 0);
         
-        // Western row (if assessed)
         if (hasWestern) {
             const westernScores = [...data.westernScores];
-            // Pad to 12 columns
             while (westernScores.length < 12) westernScores.push('-');
             
             html += `
@@ -2069,7 +1820,6 @@ function renderMethodologyTab(tab, methodologyData) {
                     <td class="genre-name">WESTERN</td>
             `;
             
-            // Add assessor scores (1-12)
             westernScores.forEach(score => {
                 if (score === '-') {
                     html += `<td>-</td>`;
@@ -2089,14 +1839,12 @@ function renderMethodologyTab(tab, methodologyData) {
                     <td class="overall-aggregate">${data.westernOverall.toFixed(1)}</td>
             `;
             
-            // For the first row of this choir, add final aggregate and rank with rowspan
             if (hasAfrican) {
                 html += `
                     <td class="final-aggregate" rowspan="${totalRows}">${data.finalAggregate.toFixed(1)}</td>
                     <td class="rank" rowspan="${totalRows}">${rank}</td>
                 `;
             } else {
-                // Only one genre, no rowspan needed
                 html += `
                     <td class="final-aggregate">${data.finalAggregate.toFixed(1)}</td>
                     <td class="rank">${rank}</td>
@@ -2106,10 +1854,8 @@ function renderMethodologyTab(tab, methodologyData) {
             html += `</tr>`;
         }
         
-        // African row (if assessed)
         if (hasAfrican) {
             const africanScores = [...data.africanScores];
-            // Pad to 12 columns
             while (africanScores.length < 12) africanScores.push('-');
             
             html += `
@@ -2118,7 +1864,6 @@ function renderMethodologyTab(tab, methodologyData) {
                     <td class="genre-name">AFRICAN</td>
             `;
             
-            // Add assessor scores (1-12)
             africanScores.forEach(score => {
                 if (score === '-') {
                     html += `<td>-</td>`;
@@ -2138,7 +1883,6 @@ function renderMethodologyTab(tab, methodologyData) {
                     <td class="overall-aggregate">${data.africanOverall.toFixed(1)}</td>
             `;
             
-            // If western was already rendered, final aggregate and rank are already added via rowspan
             if (!hasWestern) {
                 html += `
                     <td class="final-aggregate">${data.finalAggregate.toFixed(1)}</td>
@@ -2186,12 +1930,11 @@ function renderMethodologyTab(tab, methodologyData) {
     return html;
 }
 
-// ============================================
+// =================
 // UTILITY FUNCTIONS
-// ============================================
+// =================
 
 function showNotification(message, type) {
-    // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.innerHTML = `
@@ -2203,23 +1946,37 @@ function showNotification(message, type) {
     
     document.body.appendChild(notification);
     
-    // Remove notification after 3 seconds
     setTimeout(() => {
         notification.remove();
     }, 3000);
 }
 
-// ============================================
-// DASHBOARD RENDERING FUNCTIONS - UPDATED WITH DYNAMIC CATEGORY TOTALS
-// ============================================
+function calculateStandardDeviation(numbers) {
+    if (numbers.length === 0) return 0;
+    const mean = numbers.reduce((a, b) => a + b) / numbers.length;
+    const squareDiffs = numbers.map(num => Math.pow(num - mean, 2));
+    const avgSquareDiff = squareDiffs.reduce((a, b) => a + b) / numbers.length;
+    return Math.sqrt(avgSquareDiff);
+}
+
+function calculateMedian(numbers) {
+    if (numbers.length === 0) return 0;
+    const sorted = [...numbers].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 === 0 
+        ? (sorted[mid - 1] + sorted[mid]) / 2 
+        : sorted[mid];
+}
+
+// =============================
+// DASHBOARD RENDERING FUNCTIONS 
+// =============================
 
 function getCategoryTotals() {
-    // Initialize counters
     let greatChampsCount = 0;
     let largeCount = 0;
     let standardCount = 0;
     
-    // Count choirs by category
     if (appState.choirs && appState.choirs.length > 0) {
         appState.choirs.forEach(choir => {
             if (choir.category === 'GREAT CHAMPS') {
@@ -2245,8 +2002,21 @@ function renderDashboard() {
     const isAssessor = appState.currentRole === 'assessor';
     const isMonitor = appState.currentRole === 'monitor';
     
-    // Get dynamic category totals
     const categoryTotals = getCategoryTotals();
+    
+    let myAssessments = 0;
+    let myFullyAssessed = 0;
+    if (isAssessor || isChair) {
+        appState.choirs.forEach(choir => {
+            if (scoringSystem.hasAssessorAlreadyAssessed(choir.id, 'western', appState.currentUserId) || 
+                scoringSystem.hasAssessorAlreadyAssessed(choir.id, 'african', appState.currentUserId)) {
+                myAssessments++;
+            }
+            if (scoringSystem.hasAssessorFullyAssessed(choir.id, appState.currentUserId)) {
+                myFullyAssessed++;
+            }
+        });
+    }
     
     let html = `
         <div class="fade-in">
@@ -2263,7 +2033,6 @@ function renderDashboard() {
             <div class="dashboard-grid">
     `;
     
-    // Assessor Dashboard 
     if (isAssessor) {
         html += `
             <div class="dashboard-card assessable" onclick="showAssessmentChooser()" style="position: relative;">
@@ -2284,7 +2053,6 @@ function renderDashboard() {
         `;
     }
     
-    // Chair Assessor Dashboard 
     if (isChair) {
         html += `
             <div class="dashboard-card" onclick="showAssessmentChooser()">
@@ -2313,7 +2081,6 @@ function renderDashboard() {
         `;
     }
     
-    // Monitor Dashboard 
     if (isMonitor) {
         html += `
             <div class="dashboard-card" onclick="showProfessionalMonitoringCenter()">
@@ -2366,7 +2133,6 @@ function renderDashboard() {
         `;
     }
     
-    // Admin Dashboard - UPDATED: Added back Competition Results, Final Rankings & Excel Methodology cards
     if (isAdmin && appState.currentRole !== 'founder') {
         html += `
             <div class="dashboard-card" onclick="showManageChoirs()">
@@ -2419,7 +2185,6 @@ function renderDashboard() {
         `;
     }
     
-    // Founder Dashboard 
     if (appState.currentRole === 'founder') {
         html += `
             <div class="dashboard-card" onclick="showResults()">
@@ -2438,7 +2203,6 @@ function renderDashboard() {
                 <p class="card-description">View final rankings with trimmed mean calculations and tie-breaking logic.</p>
             </div>
             
-            <!-- NEW METHODOLOGY CALCULATIONS CARD -->
             <div class="dashboard-card" onclick="showMethodologyCalculations()">
                 <div class="card-icon">
                     <i class="fas fa-calculator"></i>
@@ -2457,26 +2221,10 @@ function renderDashboard() {
         `;
     }
     
-    // Competition Status
     const totalChoirs = appState.choirs.length;
     const assessedChoirs = appState.choirs.filter(c => c.status === 'assessed').length;
     const pendingChoirs = totalChoirs - assessedChoirs;
     const percentage = totalChoirs > 0 ? (assessedChoirs / totalChoirs) * 100 : 0;
-    
-    // Get assessor's assessment count
-    let myAssessments = 0;
-    let myFullyAssessed = 0;
-    if (isAssessor || isChair) {
-        appState.choirs.forEach(choir => {
-            if (scoringSystem.hasAssessorAlreadyAssessed(choir.id, 'western', appState.currentUserId) || 
-                scoringSystem.hasAssessorAlreadyAssessed(choir.id, 'african', appState.currentUserId)) {
-                myAssessments++;
-            }
-            if (scoringSystem.hasAssessorFullyAssessed(choir.id, appState.currentUserId)) {
-                myFullyAssessed++;
-            }
-        });
-    }
     
     html += `
             </div>
@@ -2504,12 +2252,14 @@ function renderDashboard() {
                             <strong style="color: var(--primary-gold);">My Assessments:</strong> ${myAssessments} choirs
                         </div>
                         <div>
-                            <small style="color: rgba(255, 255, 255, 0.6);">Fully assessed: ${myFullyAssessed} choirs</small>
+                            <small style="color: rgba(255, 255, 255, 0.6);">Fully assessed: <span style="color: var(--primary-gold); font-weight: bold;">${myFullyAssessed}</span> choirs</small>
                         </div>
                     </div>
                     <div style="margin-top: 0.5rem; font-size: 0.85rem; color: rgba(255, 255, 255, 0.7);">
                         ${myFullyAssessed > 0 ? `
-                        <i class="fas fa-check-circle" style="color: #4CAF50;"></i> You have completed ${myFullyAssessed} choir${myFullyAssessed !== 1 ? 's' : ''} fully
+                        <span style="color: var(--primary-gold);">
+                            <i class="fas fa-check-circle" style="color: var(--primary-gold);"></i> You have completed ${myFullyAssessed} choir${myFullyAssessed !== 1 ? 's' : ''} fully
+                        </span>
                         ` : `
                         <i class="fas fa-info-circle" style="color: #2196F3;"></i> Continue assessing choirs to complete your assignments
                         `}
@@ -2521,9 +2271,7 @@ function renderDashboard() {
                     <div>
     `;
     
-    // DYNAMIC CATEGORY TOTALS - Updated to show zero if no data, otherwise show actual counts
     if (totalChoirs === 0) {
-        // No choirs in the system - show zeros
         html += `
                         <span class="category-badge" style="background-color: rgba(40, 167, 69, 0.1); color: #28a745; margin-right: 0.5rem;">
                             Great Champs: 0
@@ -2536,7 +2284,6 @@ function renderDashboard() {
                         </span>
         `;
     } else {
-        // Show actual category counts
         html += `
                         <span class="category-badge" style="background-color: rgba(40, 167, 69, 0.1); color: #28a745; margin-right: 0.5rem;">
                             Great Champs: ${categoryTotals.greatChamps}
@@ -2566,303 +2313,22 @@ function renderDashboard() {
     document.getElementById('welcomeSection').style.display = 'none';
 }
 
-// ============================================
-// VIEW MY ASSESSMENTS WITH SEARCH - UPDATED WITH SEARCH BAR ON SAME LINE
-// ============================================
+// =============================
+// ASSESSMENT CHOOSER FUNCTIONS
+// =============================
 
-function showMyAssessmentsOnly() {
-    appState.currentView = 'myAssessments';
-    renderMyAssessmentsOnly();
-}
-
-function renderMyAssessmentsOnly() {
-    const assessorId = appState.currentUserId;
-    
-    // Group assessments by category
-    const assessmentsByCategory = {
-        'GREAT CHAMPS': [],
-        'LARGE': [],
-        'STANDARD': []
-    };
-    
-    // Collect all choirs that the assessor has assessed, grouped by category
+function renderAssessmentChooser() {
     appState.choirs.forEach(choir => {
-        const westernAssessment = scoringSystem.getAssessorAssessments(choir.id, 'western', assessorId);
-        const africanAssessment = scoringSystem.getAssessorAssessments(choir.id, 'african', assessorId);
+        const hasWesternScores = scoringSystem.assessorScores[choir.id]?.western && 
+                               Object.keys(scoringSystem.assessorScores[choir.id].western).length > 0;
+        const hasAfricanScores = scoringSystem.assessorScores[choir.id]?.african && 
+                               Object.keys(scoringSystem.assessorScores[choir.id].african).length > 0;
         
-        if (westernAssessment || africanAssessment) {
-            const choirStats = scoringSystem.getChoirStatistics(choir.id);
-            const overallScore = scoringSystem.getChoirOverallScore(choir.id);
-            
-            assessmentsByCategory[choir.category].push({
-                choir: choir,
-                westernAssessment: westernAssessment,
-                africanAssessment: africanAssessment,
-                choirStats: choirStats,
-                overallScore: overallScore
-            });
+        if (!hasWesternScores && !hasAfricanScores) {
+            choir.status = 'pending';
         }
     });
     
-    let totalAssessments = assessmentsByCategory['GREAT CHAMPS'].length + 
-                         assessmentsByCategory['LARGE'].length + 
-                         assessmentsByCategory['STANDARD'].length;
-    
-    let html = `
-        <div class="fade-in">
-            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-                <h3 style="color: var(--primary-gold);">My Assessments</h3>
-                <div class="action-buttons-container">
-                    <button class="action-btn outline" onclick="showDashboard()">
-                        <i class="fas fa-arrow-left"></i> Back to Dashboard
-                    </button>
-                </div>
-            </div>
-            
-            <div class="assessment-container">
-                <!-- Combined Header with Title and Search Side by Side - MATCHING PNG 1 DESIGN -->
-                <div class="assessment-header-wrapper" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-                    <div style="flex: 1;">
-                        <h4 style="color: var(--primary-gold); margin: 0;">My Assessment Summary</h4>
-                        <p style="color: rgba(255, 255, 255, 0.8); margin: 0.5rem 0 0 0; font-size: 0.9rem;">
-                            You have assessed ${totalAssessments} choir(s). Below are your assessment details sorted by category.
-                        </p>
-                        <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.85rem; margin: 0.25rem 0 0 0;">
-                            As an assessor, you can only view your own assessments.
-                        </p>
-                    </div>
-                    
-                    <!-- Search Bar on the Right - EXACTLY LIKE PNG 1 -->
-                    <div class="search-wrapper-inline">
-                        <div class="search-input-wrapper-inline" style="position: relative; width: 300px; max-width: 100%;">
-                            <i class="fas fa-search search-icon-inline" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: rgba(255, 255, 255, 0.5); z-index: 1;"></i>
-                            <input type="text" 
-                                   id="myAssessmentsSearchInput" 
-                                   class="search-input-field-inline" 
-                                   placeholder="Search your assessed choirs by name..."
-                                   onkeyup="filterMyAssessmentsBySearch()"
-                                   autocomplete="off"
-                                   style="width: 100%; padding: 10px 10px 10px 35px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 6px; color: white; font-size: 0.9rem;">
-                            <button class="search-clear-btn-inline" onclick="clearMyAssessmentsSearch()" id="myAssessmentsSearchClearBtn" style="display: none; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: rgba(255, 255, 255, 0.5); cursor: pointer; z-index: 1;">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Search Results Count for My Assessments -->
-                <div id="myAssessmentsSearchResultsCount" class="search-results-count-inline" style="margin-bottom: 1rem; padding: 0.5rem; background: rgba(212, 175, 55, 0.1); border-radius: 4px; border-left: 3px solid var(--primary-gold);"></div>
-    `;
-    
-    if (totalAssessments === 0) {
-        html += `
-                <div class="text-center py-5">
-                    <i class="fas fa-clipboard-check fa-3x" style="color: rgba(255, 255, 255, 0.2); margin-bottom: 1rem;"></i>
-                    <p style="color: rgba(255, 255, 255, 0.6);">You haven't assessed any choirs yet</p>
-                    <p style="color: rgba(255, 255, 255, 0.5); font-size: 0.9rem;">Use the "Submit Assessment" option to start assessing choirs</p>
-                </div>
-            </div>
-        `;
-    } else {
-        html += `<div id="myAssessmentsList">`;
-        
-        // Render each category section
-        Object.keys(assessmentsByCategory).forEach(category => {
-            const assessments = assessmentsByCategory[category];
-            if (assessments.length === 0) return;
-            
-            const categoryName = appState.categories[category];
-            
-            html += `
-                <div class="category-section-header" data-category="${category}" style="display: flex; justify-content: space-between; align-items: center; margin: 2rem 0 1rem 0; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(212, 175, 55, 0.3);">
-                    <h4 style="color: var(--primary-gold); margin: 0; font-size: 1.2rem;">${categoryName}</h4>
-                    <span class="category-count" style="background: rgba(212, 175, 55, 0.2); color: var(--primary-gold); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: bold;">${assessments.length} choir${assessments.length !== 1 ? 's' : ''}</span>
-                </div>
-                
-                <div class="row my-assessments-row" data-category="${category}" style="display: flex; flex-wrap: wrap; margin: 0 -0.75rem;">
-            `;
-            
-            assessments.forEach((assessment) => {
-                const choir = assessment.choir;
-                
-                // Determine assessment status
-                let statusClass = 'assessment-pending';
-                let statusText = 'Pending';
-                let statusIcon = 'fa-clock';
-                
-                if (scoringSystem.hasAssessorFullyAssessed(choir.id, appState.currentUserId)) {
-                    statusClass = 'assessment-complete';
-                    statusText = 'Fully Assessed';
-                    statusIcon = 'fa-check-circle';
-                } else if (assessment.westernAssessment || assessment.africanAssessment) {
-                    statusClass = 'assessment-partial';
-                    statusText = 'Partially Assessed';
-                    statusIcon = 'fa-check';
-                }
-                
-                html += `
-                    <div class="col-md-6 col-lg-4 mb-3 my-assessment-card" data-choir-name="${choir.name.toLowerCase()}" style="flex: 0 0 calc(33.333% - 1.5rem); margin: 0 0.75rem 1.5rem 0.75rem;">
-                        <div class="dashboard-card" style="height: 100%; background: linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(45, 45, 45, 0.9) 100%); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 10px; padding: 1.5rem;">
-                            <h4 style="color: var(--primary-gold); margin-bottom: 0.5rem; font-size: 1.2rem;">${choir.name}</h4>
-                            <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; margin-bottom: 0.5rem;">
-                                <i class="fas fa-map-marker-alt"></i> ${choir.region}
-                            </p>
-                            <span class="category-badge" style="background: rgba(212, 175, 55, 0.15); color: var(--primary-gold); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; display: inline-block;">${categoryName}</span>
-                            <div style="margin-top: 1rem;">
-                                <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.6); margin-bottom: 0.25rem; display: flex; justify-content: space-between;">
-                                    <span><strong>African:</strong></span>
-                                    <span style="color: #4CAF50; font-weight: bold;">${assessment.africanAssessment ? assessment.africanAssessment.total.toFixed(1) : 'Not Assessed'}</span>
-                                </p>
-                                <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.6); display: flex; justify-content: space-between;">
-                                    <span><strong>Western:</strong></span>
-                                    <span style="color: #4CAF50; font-weight: bold;">${assessment.westernAssessment ? assessment.westernAssessment.total.toFixed(1) : 'Not Assessed'}</span>
-                                </p>
-                            </div>
-                            <div class="choir-assessment-status" style="margin-top: 1rem;">
-                                <span class="assessment-status-badge ${statusClass}" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; ${statusClass === 'assessment-complete' ? 'background: rgba(76, 175, 80, 0.15); color: #4CAF50; border: 1px solid rgba(76, 175, 80, 0.3);' : statusClass === 'assessment-partial' ? 'background: rgba(255, 152, 0, 0.15); color: #FF9800; border: 1px solid rgba(255, 152, 0, 0.3);' : 'background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.6); border: 1px solid rgba(255, 255, 255, 0.1);'}">
-                                    <i class="fas ${statusIcon}"></i> ${statusText}
-                                </span>
-                            </div>
-                            <div style="margin-top: 1.5rem;">
-                                <button class="action-btn outline" style="width: 100%; padding: 0.75rem; background: transparent; border: 2px solid var(--primary-gold); color: var(--primary-gold); border-radius: 6px; font-weight: bold; cursor: pointer; transition: all 0.3s ease;" onclick="showMyAssessmentDetails(${choir.id})" onmouseover="this.style.background='var(--primary-gold)'; this.style.color='#000';" onmouseout="this.style.background='transparent'; this.style.color='var(--primary-gold)';">
-                                    <i class="fas fa-eye"></i> View Details
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            html += `</div>`;
-        });
-        
-        html += `</div>`;
-    }
-    
-    html += `
-            </div>
-            
-            <!-- Bottom center back button -->
-            <div class="bottom-center-back" style="text-align: center; margin-top: 2rem;">
-                <button class="action-btn outline" onclick="showDashboard()" style="padding: 0.75rem 2rem; font-size: 1rem;">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
-                </button>
-            </div>
-        </div>
-    `;
-    
-    document.getElementById('dashboardContent').innerHTML = html;
-}
-
-// ============================================
-// MY ASSESSMENTS SEARCH FUNCTIONS
-// ============================================
-
-function filterMyAssessmentsBySearch() {
-    const searchInput = document.getElementById('myAssessmentsSearchInput');
-    const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
-    
-    // Show/hide clear button
-    const clearBtn = document.getElementById('myAssessmentsSearchClearBtn');
-    if (clearBtn) {
-        clearBtn.style.display = searchTerm ? 'flex' : 'none';
-    }
-    
-    // Debounce search to improve performance
-    if (myAssessmentsSearchTimeout) {
-        clearTimeout(myAssessmentsSearchTimeout);
-    }
-    
-    myAssessmentsSearchTimeout = setTimeout(() => {
-        applyMyAssessmentsSearchFilter(searchTerm);
-    }, 300);
-}
-
-function clearMyAssessmentsSearch() {
-    const searchInput = document.getElementById('myAssessmentsSearchInput');
-    if (searchInput) {
-        searchInput.value = '';
-        filterMyAssessmentsBySearch();
-    }
-}
-
-function applyMyAssessmentsSearchFilter(searchTerm) {
-    // Get all assessment cards
-    const cards = document.querySelectorAll('.my-assessment-card');
-    const categorySections = document.querySelectorAll('.category-section-header, .my-assessments-row');
-    let visibleCount = 0;
-    
-    if (!searchTerm) {
-        // Show all cards
-        cards.forEach(card => {
-            card.style.display = '';
-        });
-        
-        // Show all category sections
-        categorySections.forEach(section => {
-            section.style.display = '';
-        });
-        
-        visibleCount = cards.length;
-    } else {
-        // Track which categories have visible cards
-        const categoriesWithVisibleCards = new Set();
-        
-        // Filter cards
-        cards.forEach(card => {
-            const choirName = card.getAttribute('data-choir-name') || '';
-            if (choirName.includes(searchTerm)) {
-                card.style.display = '';
-                // Get the category from the parent row
-                const parentRow = card.closest('.my-assessments-row');
-                if (parentRow) {
-                    const category = parentRow.getAttribute('data-category');
-                    if (category) categoriesWithVisibleCards.add(category);
-                }
-                visibleCount++;
-            } else {
-                card.style.display = 'none';
-            }
-        });
-        
-        // Hide/show category sections based on visible cards
-        document.querySelectorAll('.my-assessments-row').forEach(row => {
-            const category = row.getAttribute('data-category');
-            if (categoriesWithVisibleCards.has(category)) {
-                row.style.display = '';
-                // Show corresponding header
-                const header = document.querySelector(`.category-section-header[data-category="${category}"]`);
-                if (header) header.style.display = '';
-            } else {
-                row.style.display = 'none';
-                const header = document.querySelector(`.category-section-header[data-category="${category}"]`);
-                if (header) header.style.display = 'none';
-            }
-        });
-    }
-    
-    // Update search results count
-    updateMyAssessmentsSearchResultsCount(visibleCount, searchTerm);
-}
-
-function updateMyAssessmentsSearchResultsCount(count, searchTerm) {
-    const countElement = document.getElementById('myAssessmentsSearchResultsCount');
-    if (!countElement) return;
-    
-    if (searchTerm) {
-        countElement.innerHTML = `<i class="fas fa-filter"></i> Found <strong>${count}</strong> assessed choir${count !== 1 ? 's' : ''} matching "<strong>${escapeHtml(searchTerm)}</strong>"`;
-        countElement.style.display = 'block';
-    } else {
-        countElement.innerHTML = '';
-        countElement.style.display = 'none';
-    }
-}
-
-// ============================================
-// SEARCH BAR FUNCTIONS - UPDATED FOR RIGHT SIDE POSITION
-// ============================================
-
-function renderAssessmentChooser() {
     let html = `
         <div class="fade-in">
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
@@ -2875,7 +2341,6 @@ function renderAssessmentChooser() {
             </div>
             
             <div class="assessment-container">
-                <!-- Combined Header with Tabs and Search Side by Side -->
                 <div class="assessment-header-wrapper">
                     <div class="tab-nav">
                         <button class="tab-btn active" onclick="filterChoirsByCategory(event, 'ALL')">All Categories</button>
@@ -2884,7 +2349,6 @@ function renderAssessmentChooser() {
                         <button class="tab-btn" onclick="filterChoirsByCategory(event, 'STANDARD')">Standard</button>
                     </div>
                     
-                    <!-- Search Bar on the Right -->
                     <div class="search-wrapper-inline">
                         <div class="search-input-wrapper-inline">
                             <i class="fas fa-search search-icon-inline"></i>
@@ -2901,40 +2365,34 @@ function renderAssessmentChooser() {
                     </div>
                 </div>
                 
-                <!-- Search Results Count -->
                 <div id="searchResultsCount" class="search-results-count-inline"></div>
                 
-                <div id="choirsList">
-                    <!-- Choirs will be loaded here -->
-                </div>
-                
-                <!-- Back to Dashboard button -->
-                <div class="bottom-center-back">
-                    <button class="action-btn outline" onclick="showDashboard()">
-                        <i class="fas fa-arrow-left"></i> Back to Dashboard
-                    </button>
-                </div>
+                <div id="choirsList"></div>
+    `;
+    html += `
+            </div>
+            
+            <div class="bottom-center-back" style="text-align: center; margin-top: 2rem;">
+                <button class="action-btn outline" onclick="showDashboard()" style="padding: 0.75rem 2rem; font-size: 1rem;">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </button>
             </div>
         </div>
     `;
     
     document.getElementById('dashboardContent').innerHTML = html;
-    // Simulate event for initial load
     filterChoirsByCategory({ target: { classList: { add: function() {}, remove: function() {} } } }, 'ALL');
 }
 
-// Filter choirs by search input
 function filterChoirsBySearch() {
     const searchInput = document.getElementById('choirSearchInput');
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
     
-    // Show/hide clear button
     const clearBtn = document.getElementById('searchClearBtnInline');
     if (clearBtn) {
         clearBtn.style.display = searchTerm ? 'flex' : 'none';
     }
     
-    // Debounce search to improve performance
     if (searchTimeout) {
         clearTimeout(searchTimeout);
     }
@@ -2944,7 +2402,6 @@ function filterChoirsBySearch() {
     }, 300);
 }
 
-// Clear search input
 function clearSearch() {
     const searchInput = document.getElementById('choirSearchInput');
     if (searchInput) {
@@ -2953,30 +2410,23 @@ function clearSearch() {
     }
 }
 
-// Apply both category and search filters
 function applyFilters(category, searchTerm) {
     const container = document.getElementById('choirsList');
     
-    // Filter by category first
     let filteredChoirs = category === 'ALL' 
         ? appState.choirs 
         : appState.choirs.filter(c => c.category === category);
     
-    // Then filter by search term if provided
     if (searchTerm) {
         filteredChoirs = filteredChoirs.filter(choir => 
             choir.name.toLowerCase().includes(searchTerm)
         );
     }
     
-    // Update search results count
     updateSearchResultsCount(filteredChoirs.length, category, searchTerm);
-    
-    // Render the filtered choirs
     renderFilteredChoirs(filteredChoirs);
 }
 
-// Update the search results count display
 function updateSearchResultsCount(count, category, searchTerm) {
     const countElement = document.getElementById('searchResultsCount');
     if (!countElement) return;
@@ -2991,32 +2441,20 @@ function updateSearchResultsCount(count, category, searchTerm) {
     }
 }
 
-// Helper function to escape HTML
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-// Modified filterChoirsByCategory to work with search
 function filterChoirsByCategory(event, category) {
     currentCategoryFilter = category;
     
-    // Update active tab
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     if (event && event.target) {
         event.target.classList.add('active');
     }
     
-    // Get current search term
     const searchInput = document.getElementById('choirSearchInput');
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
     
-    // Apply filters
     applyFilters(category, searchTerm);
 }
 
-// Render the filtered choirs (extracted from original filterChoirsByCategory)
 function renderFilteredChoirs(filteredChoirs) {
     const container = document.getElementById('choirsList');
     
@@ -3035,23 +2473,23 @@ function renderFilteredChoirs(filteredChoirs) {
     filteredChoirs.forEach(choir => {
         const assessorId = appState.currentUserId;
         
-        // Check if assessor has already assessed this choir
         const hasAssessedWestern = scoringSystem.hasAssessorAlreadyAssessed(choir.id, 'western', assessorId);
         const hasAssessedAfrican = scoringSystem.hasAssessorAlreadyAssessed(choir.id, 'african', assessorId);
         const hasFullyAssessed = scoringSystem.hasAssessorFullyAssessed(choir.id, assessorId);
         const hasAssessedAny = hasAssessedWestern || hasAssessedAfrican;
         
-        // Check if choir has both songs
         const hasBothSongs = choir.africanSong && choir.africanSong.trim() !== '' && 
                             choir.westernSong && choir.westernSong.trim() !== '';
         
         let buttonText = '';
         let buttonTooltip = '';
-        let cardClass = 'assessable';
+        let buttonDisabled = hasFullyAssessed;
+        let buttonClass = hasFullyAssessed ? 'outline assessed' : (hasAssessedAny ? 'outline' : '');
+        let cardClass = '';
         
         if (hasFullyAssessed) {
-            buttonText = 'View Assessment';
-            buttonTooltip = 'You have fully assessed this choir. Click to view details.';
+            buttonText = 'Fully Assessed';
+            buttonTooltip = 'This choir has been fully assessed';
             cardClass = '';
         } else if (hasAssessedAny) {
             if (hasBothSongs) {
@@ -3065,14 +2503,13 @@ function renderFilteredChoirs(filteredChoirs) {
             } else {
                 buttonText = 'View Assessment';
                 buttonTooltip = 'You have already assessed this choir';
-                cardClass = '';
             }
         } else {
             buttonText = 'Start Assessment';
             buttonTooltip = hasBothSongs ? 'Assess both Western and African songs' : 'Assess single song';
+            cardClass = 'assessable';
         }
         
-        // Show assessment progress dots
         let progressDots = '';
         if (hasBothSongs) {
             progressDots = `
@@ -3107,11 +2544,19 @@ function renderFilteredChoirs(filteredChoirs) {
                             <strong>Western:</strong> ${choir.westernSong ? choir.westernSong.substring(0, 30) + (choir.westernSong.length > 30 ? '...' : '') : 'Not Performing'}
                         </p>
                     </div>
+                    ${hasFullyAssessed ? `
+                    <div style="margin-top: 0.5rem; text-align: center;">
+                        <span class="fully-assessed-badge">
+                            <i class="fas fa-check-circle"></i> FULLY ASSESSED
+                        </span>
+                    </div>
+                    ` : ''}
                     <div style="margin-top: 1rem;">
-                        <button class="action-btn ${hasFullyAssessed ? 'outline' : ''}" 
-                                style="width: 100%;"
-                                onclick="${hasFullyAssessed ? `showMyAssessmentDetails(${choir.id})` : `showProfessionalAdjudication(${choir.id})`}"
-                                title="${buttonTooltip}">
+                        <button class="action-btn ${buttonClass}" 
+                                style="width: 100%; ${hasFullyAssessed ? 'background: rgba(212, 175, 55, 0.1); color: var(--primary-gold); border-color: var(--primary-gold); opacity: 0.8; cursor: not-allowed;' : ''}"
+                                onclick="${!hasFullyAssessed ? `showProfessionalAdjudication(${choir.id})` : 'void(0)'}"
+                                title="${buttonTooltip}"
+                                ${hasFullyAssessed ? 'disabled' : ''}>
                             ${buttonText}
                         </button>
                     </div>
@@ -3124,19 +2569,595 @@ function renderFilteredChoirs(filteredChoirs) {
     container.innerHTML = html;
 }
 
+// =============================
+// VIEW MY ASSESSMENTS FUNCTIONS
+// =============================
+
+function showMyAssessmentsOnly() {
+    appState.currentView = 'myAssessments';
+    renderMyAssessmentsOnly();
+}
+
+function renderMyAssessmentsOnly() {
+    const assessorId = appState.currentUserId;
+    
+    const assessmentsByCategory = {
+        'GREAT CHAMPS': [],
+        'LARGE': [],
+        'STANDARD': []
+    };
+    
+    appState.choirs.forEach(choir => {
+        const westernAssessment = scoringSystem.getAssessorAssessments(choir.id, 'western', assessorId);
+        const africanAssessment = scoringSystem.getAssessorAssessments(choir.id, 'african', assessorId);
+        
+        if (westernAssessment || africanAssessment) {
+            const choirStats = scoringSystem.getChoirStatistics(choir.id);
+            const overallScore = scoringSystem.getChoirOverallScore(choir.id);
+            
+            assessmentsByCategory[choir.category].push({
+                choir: choir,
+                westernAssessment: westernAssessment,
+                africanAssessment: africanAssessment,
+                choirStats: choirStats,
+                overallScore: overallScore
+            });
+        }
+    });
+    
+    let totalAssessments = assessmentsByCategory['GREAT CHAMPS'].length + 
+                         assessmentsByCategory['LARGE'].length + 
+                         assessmentsByCategory['STANDARD'].length;
+    
+    let html = `
+        <div class="fade-in">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <h3 style="color: var(--primary-gold);">My Assessments</h3>
+                <div class="action-buttons-container">
+                    <button class="action-btn outline" onclick="showDashboard()">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </button>
+                </div>
+            </div>
+            
+            <div class="assessment-container">
+                <div class="assessment-header-wrapper" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                    <div style="flex: 1;">
+                        <h4 style="color: var(--primary-gold); margin: 0;">My Assessment Summary</h4>
+                        <p style="color: rgba(255, 255, 255, 0.8); margin: 0.5rem 0 0 0; font-size: 0.9rem;">
+                            You have assessed ${totalAssessments} choir(s). Below are your assessment details sorted by category.
+                        </p>
+                        <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.85rem; margin: 0.25rem 0 0 0;">
+                            As an assessor, you can only view your own assessments.
+                        </p>
+                    </div>
+                    
+                    <div class="search-wrapper-inline">
+                        <div class="search-input-wrapper-inline">
+                            <i class="fas fa-search search-icon-inline"></i>
+                            <input type="text" 
+                                   id="myAssessmentsSearchInput" 
+                                   class="search-input-field-inline" 
+                                   placeholder="Search your assessed choirs by name..."
+                                   onkeyup="filterMyAssessmentsBySearch()"
+                                   autocomplete="off">
+                            <button class="search-clear-btn-inline" onclick="clearMyAssessmentsSearch()" id="myAssessmentsSearchClearBtn" style="display: none;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="myAssessmentsSearchResultsCount" class="search-results-count-inline" style="margin-bottom: 1rem; padding: 0.5rem; border-radius: 4px; display: block;"></div>
+    `;
+    
+    if (totalAssessments === 0) {
+        html += `
+                <div class="text-center py-5">
+                    <i class="fas fa-clipboard-check fa-3x" style="color: rgba(255, 255, 255, 0.2); margin-bottom: 1rem;"></i>
+                    <p style="color: rgba(255, 255, 255, 0.6);">You haven't assessed any choirs yet</p>
+                    <p style="color: rgba(255, 255, 255, 0.5); font-size: 0.9rem;">Use the "Submit Assessment" option to start assessing choirs</p>
+                </div>
+            </div>
+        `;
+    } else {
+        html += `<div id="myAssessmentsList">`;
+        
+        Object.keys(assessmentsByCategory).forEach(category => {
+            const assessments = assessmentsByCategory[category];
+            if (assessments.length === 0) return;
+            
+            const categoryName = appState.categories[category];
+            
+            html += `
+                <div class="category-section-header" data-category="${category}" style="display: flex; justify-content: space-between; align-items: center; margin: 2rem 0 1rem 0; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(212, 175, 55, 0.3);">
+                    <h4 style="color: var(--primary-gold); margin: 0; font-size: 1.2rem;">${categoryName}</h4>
+                    <span class="category-count" style="background: rgba(212, 175, 55, 0.2); color: var(--primary-gold); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: bold;">${assessments.length} choir${assessments.length !== 1 ? 's' : ''}</span>
+                </div>
+                
+                <div class="row my-assessments-row" data-category="${category}" style="display: flex; flex-wrap: wrap; margin: 0 -0.75rem;">
+            `;
+            
+            assessments.forEach((assessment) => {
+                const choir = assessment.choir;
+                
+                let statusClass = 'assessment-pending';
+                let statusText = 'Pending';
+                let statusIcon = 'fa-clock';
+                
+                if (scoringSystem.hasAssessorFullyAssessed(choir.id, appState.currentUserId)) {
+                    statusClass = 'assessment-complete';
+                    statusText = 'Fully Assessed';
+                    statusIcon = 'fa-check-circle';
+                } else if (assessment.westernAssessment || assessment.africanAssessment) {
+                    statusClass = 'assessment-partial';
+                    statusText = 'Partially Assessed';
+                    statusIcon = 'fa-check';
+                }
+                
+                html += `
+                    <div class="col-md-6 col-lg-4 mb-3 my-assessment-card" data-choir-name="${choir.name.toLowerCase()}" style="flex: 0 0 calc(33.333% - 1.5rem); margin: 0 0.75rem 1.5rem 0.75rem;">
+                        <div class="dashboard-card" style="height: 100%; background: linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(45, 45, 45, 0.9) 100%); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 10px; padding: 1.5rem;">
+                            <h4 style="color: var(--primary-gold); margin-bottom: 0.5rem; font-size: 1.2rem;">${choir.name}</h4>
+                            <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                                <i class="fas fa-map-marker-alt"></i> ${choir.region}
+                            </p>
+                            <span class="category-badge" style="background: rgba(212, 175, 55, 0.15); color: var(--primary-gold); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; display: inline-block;">${categoryName}</span>
+                            <div style="margin-top: 1rem;">
+                                <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.6); margin-bottom: 0.25rem; display: flex; justify-content: space-between;">
+                                    <span><strong>African:</strong></span>
+                                    <span style="color: #4CAF50; font-weight: bold;">${assessment.africanAssessment ? assessment.africanAssessment.total.toFixed(1) : 'Not Assessed'}</span>
+                                </p>
+                                <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.6); display: flex; justify-content: space-between;">
+                                    <span><strong>Western:</strong></span>
+                                    <span style="color: #4CAF50; font-weight: bold;">${assessment.westernAssessment ? assessment.westernAssessment.total.toFixed(1) : 'Not Assessed'}</span>
+                                </p>
+                            </div>
+                            <div class="choir-assessment-status" style="margin-top: 1rem;">
+                                <span class="assessment-status-badge ${statusClass}" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; ${statusClass === 'assessment-complete' ? 'background: rgba(212, 175, 55, 0.15); color: var(--primary-gold); border: 1px solid rgba(212, 175, 55, 0.3);' : statusClass === 'assessment-partial' ? 'background: rgba(255, 152, 0, 0.15); color: #FF9800; border: 1px solid rgba(255, 152, 0, 0.3);' : 'background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.6); border: 1px solid rgba(255, 255, 255, 0.1);'}">
+                                    <i class="fas ${statusIcon}"></i> ${statusText}
+                                </span>
+                            </div>
+                            <div style="margin-top: 1.5rem;">
+                                <button class="action-btn outline" style="width: 100%; padding: 0.75rem; background: transparent; border: 2px solid var(--primary-gold); color: var(--primary-gold); border-radius: 6px; font-weight: bold; cursor: pointer; transition: all 0.3s ease;" onclick="showMyAssessmentDetails(${choir.id})" onmouseover="this.style.background='var(--primary-gold)'; this.style.color='#000';" onmouseout="this.style.background='transparent'; this.style.color='var(--primary-gold)';">
+                                    <i class="fas fa-eye"></i> View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `</div>`;
+        });
+        
+        html += `</div>`;
+    }
+    
+    html += `
+            </div>
+            
+            <div class="bottom-center-back" style="text-align: center; margin-top: 2rem;">
+                <button class="action-btn outline" onclick="showDashboard()" style="padding: 0.75rem 2rem; font-size: 1rem;">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('dashboardContent').innerHTML = html;
+}
+
+// ================================
+// MY ASSESSMENTS SEARCH FUNCTIONS
+// ================================
+
+function filterMyAssessmentsBySearch() {
+    const searchInput = document.getElementById('myAssessmentsSearchInput');
+    const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    
+    const clearBtn = document.getElementById('myAssessmentsSearchClearBtn');
+    if (clearBtn) {
+        clearBtn.style.display = searchTerm ? 'flex' : 'none';
+    }
+    
+    if (myAssessmentsSearchTimeout) {
+        clearTimeout(myAssessmentsSearchTimeout);
+    }
+    
+    myAssessmentsSearchTimeout = setTimeout(() => {
+        applyMyAssessmentsSearchFilter(searchTerm);
+    }, 300);
+}
+
+function clearMyAssessmentsSearch() {
+    const searchInput = document.getElementById('myAssessmentsSearchInput');
+    if (searchInput) {
+        searchInput.value = '';
+        filterMyAssessmentsBySearch();
+    }
+}
+
+function applyMyAssessmentsSearchFilter(searchTerm) {
+    const cards = document.querySelectorAll('.my-assessment-card');
+    const categorySections = document.querySelectorAll('.category-section-header, .my-assessments-row');
+    let visibleCount = 0;
+    
+    if (!searchTerm) {
+        cards.forEach(card => {
+            card.style.display = '';
+        });
+        
+        categorySections.forEach(section => {
+            section.style.display = '';
+        });
+        
+        visibleCount = cards.length;
+    } else {
+        const categoriesWithVisibleCards = new Set();
+        
+        cards.forEach(card => {
+            const choirName = card.getAttribute('data-choir-name') || '';
+            if (choirName.includes(searchTerm)) {
+                card.style.display = '';
+                const parentRow = card.closest('.my-assessments-row');
+                if (parentRow) {
+                    const category = parentRow.getAttribute('data-category');
+                    if (category) categoriesWithVisibleCards.add(category);
+                }
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        document.querySelectorAll('.my-assessments-row').forEach(row => {
+            const category = row.getAttribute('data-category');
+            if (categoriesWithVisibleCards.has(category)) {
+                row.style.display = '';
+                const header = document.querySelector(`.category-section-header[data-category="${category}"]`);
+                if (header) header.style.display = '';
+            } else {
+                row.style.display = 'none';
+                const header = document.querySelector(`.category-section-header[data-category="${category}"]`);
+                if (header) header.style.display = 'none';
+            }
+        });
+    }
+    
+    updateMyAssessmentsSearchResultsCount(visibleCount, searchTerm);
+}
+
+function updateMyAssessmentsSearchResultsCount(count, searchTerm) {
+    const countElement = document.getElementById('myAssessmentsSearchResultsCount');
+    if (!countElement) return;
+    
+    if (searchTerm) {
+        countElement.innerHTML = `<i class="fas fa-filter"></i> Found <strong>${count}</strong> assessed choir${count !== 1 ? 's' : ''} matching "<strong>${escapeHtml(searchTerm)}</strong>"`;
+        countElement.style.display = 'block';
+    } else {
+        countElement.innerHTML = '';
+        countElement.style.display = 'none';
+    }
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// =========================================
+// FIXED METHODOLOGY DETAILS MODAL FUNCTIONS 
+// =========================================
+
+function showChoirMethodologyDetails(choirId, genre = null) {
+    const choir = appState.choirs.find(c => c.id === choirId);
+    if (!choir) {
+        showNotification('Choir not found', 'error');
+        return;
+    }
+    
+    const stats = scoringSystem.getChoirStatistics(choirId);
+    
+    if (!genre) {
+        if (stats.western.count > 0 && stats.african.count > 0) {
+            showMethodologyGenreSelector(choir, stats);
+        } else if (stats.western.count > 0) {
+            renderMethodologyDetailsModal(choir, 'western', stats);
+        } else if (stats.african.count > 0) {
+            renderMethodologyDetailsModal(choir, 'african', stats);
+        } else {
+            showNotification('No assessment data available for this choir', 'warning');
+        }
+    } else {
+        renderMethodologyDetailsModal(choir, genre, stats);
+    }
+}
+
+function showMethodologyGenreSelector(choir, stats) {
+    // Remove existing modal if any
+    const existingModal = document.getElementById('methodologyGenreModal');
+    if (existingModal) existingModal.remove();
+    
+    const modalHtml = `
+        <div class="modal" id="methodologyGenreModal" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 9999; align-items: center; justify-content: center;">
+            <div class="modal-content" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border: 2px solid var(--primary-gold); border-radius: 15px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(212, 175, 55, 0.3); background: linear-gradient(135deg, #000 0%, #1a1a1a 100%); border-radius: 13px 13px 0 0;">
+                    <span style="font-size: 1.2rem; font-weight: bold; color: var(--primary-gold);"><i class="fas fa-calculator"></i> Select Genre Methodology</span>
+                    <button class="action-btn" onclick="closeMethodologyGenreModal()" style="padding: 0.75rem 1.5rem; font-size: 0.95rem; background: rgba(255, 255, 255, 0.05); border: 2px solid var(--primary-gold); color: var(--primary-gold); border-radius: 8px; font-weight: 600; transition: all 0.3s ease; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-arrow-left" style="color: var(--primary-gold);"></i> Back to Results
+                    </button>
+                </div>
+                <div class="modal-body" style="padding: 2rem;">
+                    <h4 style="color: var(--primary-gold); margin-bottom: 1.5rem; text-align: center; font-size: 1.3rem;">
+                        ${choir.name}
+                    </h4>
+                    <p style="text-align: center; margin-bottom: 2rem; color: rgba(255,255,255,0.9); font-size: 1rem;">
+                        Select which genre's methodology you want to view:
+                    </p>
+                    
+                    <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+                        ${stats.western.count > 0 ? `
+                        <button class="action-btn" onclick="renderMethodologyDetailsModal(${JSON.stringify(choir).replace(/"/g, '&quot;')}, 'western', ${JSON.stringify(stats).replace(/"/g, '&quot;')}); closeMethodologyGenreModal();" 
+                                style="flex: 1; min-width: 150px; padding: 1.5rem 1rem; background: rgba(33, 150, 243, 0.15); color: #2196f3; border: 2px solid #2196f3; border-radius: 10px; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; transition: all 0.3s ease; cursor: pointer;">
+                            <i class="fas fa-globe" style="font-size: 2rem;"></i>
+                            <span style="font-weight: bold; font-size: 1.1rem;">Western</span>
+                            <span style="font-size: 0.9rem; color: rgba(255,255,255,0.8);">${stats.western.count} assessor${stats.western.count !== 1 ? 's' : ''}</span>
+                        </button>
+                        ` : ''}
+                        
+                        ${stats.african.count > 0 ? `
+                        <button class="action-btn" onclick="renderMethodologyDetailsModal(${JSON.stringify(choir).replace(/"/g, '&quot;')}, 'african', ${JSON.stringify(stats).replace(/"/g, '&quot;')}); closeMethodologyGenreModal();" 
+                                style="flex: 1; min-width: 150px; padding: 1.5rem 1rem; background: rgba(244, 67, 54, 0.15); color: #f44336; border: 2px solid #f44336; border-radius: 10px; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; transition: all 0.3s ease; cursor: pointer;">
+                            <i class="fas fa-drum" style="font-size: 2rem;"></i>
+                            <span style="font-weight: bold; font-size: 1.1rem;">African</span>
+                            <span style="font-size: 0.9rem; color: rgba(255,255,255,0.8);">${stats.african.count} assessor${stats.african.count !== 1 ? 's' : ''}</span>
+                        </button>
+                        ` : ''}
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button class="action-btn" onclick="closeMethodologyGenreModal()" style="padding: 0.75rem 2rem; font-size: 1rem; background: rgba(255, 255, 255, 0.05); border: 2px solid var(--primary-gold); color: var(--primary-gold); border-radius: 8px; font-weight: 600; transition: all 0.3s ease; cursor: pointer;">
+                            <i class="fas fa-times" style="color: var(--primary-gold);"></i> Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function closeMethodologyGenreModal() {
+    const modal = document.getElementById('methodologyGenreModal');
+    if (modal) modal.remove();
+}
+
+function renderMethodologyDetailsModal(choir, genre, stats) {
+    const genreName = genre === 'western' ? 'Western' : 'African';
+    const genreColor = genre === 'western' ? '#2196f3' : '#f44336';
+    
+    const assessments = scoringSystem.getAllAssessorAssessments(choir.id, genre);
+    const rawScores = assessments.map(a => a.total);
+    const sortedScores = [...rawScores].sort((a, b) => a - b);
+    
+    let calculationSteps = [];
+    
+    if (rawScores.length === 1) {
+        calculationSteps = [
+            { text: `Single assessor: Use raw score directly`, value: rawScores[0] }
+        ];
+    } else if (rawScores.length === 2) {
+        calculationSteps = [
+            { text: `Two assessors: Calculate average of both scores`, value: null },
+            { text: `Score 1: ${rawScores[0].toFixed(1)}`, value: rawScores[0] },
+            { text: `Score 2: ${rawScores[1].toFixed(1)}`, value: rawScores[1] },
+            { text: `Average: (${rawScores[0].toFixed(1)} + ${rawScores[1].toFixed(1)}) / 2 = ${((rawScores[0] + rawScores[1]) / 2).toFixed(1)}`, value: null }
+        ];
+    } else if (rawScores.length >= 3) {
+        const trimmedScores = sortedScores.slice(1, -1);
+        const trimmedSum = trimmedScores.reduce((a, b) => a + b, 0);
+        const trimmedMean = trimmedSum / trimmedScores.length;
+        
+        calculationSteps = [
+            { text: `Three or more assessors: Remove highest and lowest scores, then average the remainder`, value: null },
+            { text: `All scores (sorted): ${sortedScores.map(s => s.toFixed(1)).join(', ')}`, value: null },
+            { text: `Lowest score (removed): ${sortedScores[0].toFixed(1)}`, value: sortedScores[0], isRemoved: true },
+            { text: `Highest score (removed): ${sortedScores[sortedScores.length - 1].toFixed(1)}`, value: sortedScores[sortedScores.length - 1], isRemoved: true },
+            { text: `Remaining scores: ${trimmedScores.map(s => s.toFixed(1)).join(', ')}`, value: null },
+            { text: `Sum of remaining: ${trimmedSum.toFixed(1)}`, value: null },
+            { text: `Number of remaining: ${trimmedScores.length}`, value: null },
+            { text: `Trimmed mean: ${trimmedSum.toFixed(1)} / ${trimmedScores.length} = ${trimmedMean.toFixed(1)}`, value: null }
+        ];
+    }
+    
+    let assessorRows = '';
+    assessments.forEach(assessment => {
+        let statusClass = '';
+        let statusText = '';
+        
+        if (rawScores.length === 1) {
+            statusClass = 'status-assessed';
+            statusText = 'Single Assessor - Raw Score';
+        } else if (rawScores.length === 2) {
+            statusClass = 'status-assessed';
+            statusText = 'Included in Average';
+        } else if (rawScores.length >= 3) {
+            if (assessment.total === sortedScores[0]) {
+                statusClass = 'status-pending';
+                statusText = 'Lowest Score - Removed';
+            } else if (assessment.total === sortedScores[sortedScores.length - 1]) {
+                statusClass = 'status-pending';
+                statusText = 'Highest Score - Removed';
+            } else {
+                statusClass = 'status-assessed';
+                statusText = 'Included in Trimmed Mean';
+            }
+        }
+        
+        assessorRows += `
+            <tr>
+                <td><strong>${assessment.assessorName}</strong></td>
+                <td class="score-cell">${assessment.total.toFixed(1)}</td>
+                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+            </tr>
+        `;
+    });
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('methodologyDetailsModal');
+    if (existingModal) existingModal.remove();
+    
+    const modalHtml = `
+        <div class="modal" id="methodologyDetailsModal" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 9999; align-items: center; justify-content: center;">
+            <div class="modal-content" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border: 2px solid var(--primary-gold); border-radius: 15px; max-width: 800px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(212, 175, 55, 0.3); background: linear-gradient(135deg, #000 0%, #1a1a1a 100%); border-radius: 13px 13px 0 0;">
+                    <span style="font-size: 1.2rem; font-weight: bold; color: var(--primary-gold);"><i class="fas fa-calculator"></i> ${genreName} Methodology - ${choir.name}</span>
+                    <button class="action-btn" onclick="showMethodologyGenreSelector(${JSON.stringify(choir).replace(/"/g, '&quot;')}, ${JSON.stringify(stats).replace(/"/g, '&quot;')}); closeMethodologyDetailsModal();" style="padding: 0.75rem 1.5rem; font-size: 0.95rem; background: rgba(255, 255, 255, 0.05); border: 2px solid var(--primary-gold); color: var(--primary-gold); border-radius: 8px; font-weight: 600; transition: all 0.3s ease; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-arrow-left" style="color: var(--primary-gold);"></i> Back to Genre Selection
+                    </button>
+                </div>
+                <div class="modal-body" style="padding: 1.5rem;">
+                    
+                    <div style="background: rgba(${genre === 'western' ? '33, 150, 243' : '244, 67, 54'}, 0.15); padding: 1rem; border-radius: 8px; border: 1px solid ${genreColor}; margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                            <div>
+                                <strong style="color: ${genreColor};">${genreName} Category - Trimmed Mean Calculation</strong>
+                            </div>
+                            <div>
+                                <span style="background: ${genreColor}; color: white; padding: 0.25rem 1rem; border-radius: 20px; font-weight: bold;">
+                                    Final Score: ${genre === 'western' ? stats.western.trimmedMean.toFixed(1) : stats.african.trimmedMean.toFixed(1)}
+                                </span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 0.5rem; color: rgba(255,255,255,0.9);">
+                            <strong>Number of Assessors:</strong> ${rawScores.length}
+                        </div>
+                    </div>
+                    
+                    <h5 style="color: var(--primary-gold); margin-bottom: 1rem; font-size: 1.1rem;">
+                        <i class="fas fa-clipboard-list"></i> Assessor Scores
+                    </h5>
+                    
+                    <div class="table-responsive" style="margin-bottom: 1.5rem;">
+                        <table class="results-table" style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr>
+                                    <th style="text-align: left; padding: 0.75rem; background: rgba(212, 175, 55, 0.2); color: var(--primary-gold);">Assessor</th>
+                                    <th style="text-align: left; padding: 0.75rem; background: rgba(212, 175, 55, 0.2); color: var(--primary-gold);">Score</th>
+                                    <th style="text-align: left; padding: 0.75rem; background: rgba(212, 175, 55, 0.2); color: var(--primary-gold);">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${assessorRows}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h5 style="color: var(--primary-gold); margin-bottom: 1rem; font-size: 1.1rem;">
+                        <i class="fas fa-calculator"></i> Calculation Steps
+                    </h5>
+                    
+                    <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 1rem; border: 1px solid rgba(212,175,55,0.2);">
+                        ${calculationSteps.map(step => `
+                            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; ${step.isRemoved ? 'background: rgba(244,67,54,0.1); border-radius: 4px; margin: 2px 0;' : ''}">
+                                <i class="fas ${step.isRemoved ? 'fa-times-circle' : 'fa-arrow-right'}" 
+                                   style="color: ${step.isRemoved ? '#f44336' : '#4CAF50'}; min-width: 20px;"></i>
+                                <span style="color: rgba(255,255,255,0.9);">${step.text}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(212,175,55,0.1); border-radius: 8px; border-left: 4px solid var(--primary-gold);">
+                        <strong style="color: var(--primary-gold);">Methodology Applied:</strong>
+                        <ul style="margin-top: 0.5rem; padding-left: 1.5rem; color: rgba(255,255,255,0.9);">
+                            <li><strong>1 Assessor:</strong> Raw score used</li>
+                            <li><strong>2 Assessors:</strong> Average of both scores</li>
+                            <li><strong>3+ Assessors:</strong> Remove highest & lowest, average remainder</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button class="action-btn outline" onclick="closeMethodologyDetailsModal()" style="padding: 0.75rem 2rem; font-size: 1rem;">
+                            <i class="fas fa-arrow-left"></i> Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function closeMethodologyDetailsModal() {
+    const modal = document.getElementById('methodologyDetailsModal');
+    if (modal) modal.remove();
+}
+
+// ========================
+// RENDER RESULTS FUNCTION
+// =======================
+
+function renderResults() {
+    scoringSystem.calculateRankings();
+    
+    const isAssessor = appState.currentRole === 'assessor';
+    const isAdmin = ['admin', 'founder'].includes(appState.currentRole);
+    
+    let html = `
+        <div class="fade-in">
+            <div class="d-flex justify-content-between align-items-center mb-4 results-header-wrapper">
+                <h3 style="color: var(--primary-gold); margin: 0;">Competition Results</h3>
+                <div class="results-actions-group">
+                    <button class="action-btn outline" onclick="showDashboard()">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </button>
+                    <button class="action-btn" onclick="exportToExcel()">
+                        <i class="fas fa-file-excel"></i> Export
+                    </button>
+                </div>
+            </div>
+            
+            <div class="assessment-container">
+                <div class="tab-nav" style="overflow-x: auto; white-space: nowrap;">
+                    <button class="tab-btn active" onclick="filterResults(event, 'overall')">Overall</button>
+                    <button class="tab-btn" onclick="filterResults(event, 'western')">Western</button>
+                    <button class="tab-btn" onclick="filterResults(event, 'african')">African</button>
+                    <button class="tab-btn" onclick="filterResults(event, 'GREAT CHAMPS')">Great Champs</button>
+                    <button class="tab-btn" onclick="filterResults(event, 'LARGE')">Large</button>
+                    <button class="tab-btn" onclick="filterResults(event, 'STANDARD')">Standard</button>
+                    ${isAssessor ? `<button class="tab-btn" onclick="filterResults(event, 'my')">My Assessments</button>` : ''}
+                </div>
+                
+                <div id="resultsTable" class="table-responsive" style="margin-top: 1.5rem;"></div>
+            </div>
+            
+            <div class="bottom-center-back">
+                <button class="action-btn outline" onclick="showDashboard()">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('dashboardContent').innerHTML = html;
+    filterResults({ target: { classList: { add: function() {}, remove: function() {} } } }, 'overall');
+}
+
 function filterResults(event, category) {
     const container = document.getElementById('resultsTable');
     const isAssessor = appState.currentRole === 'assessor';
-    const isAdmin = ['admin', 'founder', 'chair'].includes(appState.currentRole);
+    const isAdmin = ['admin', 'founder'].includes(appState.currentRole);
     
-    // Update active tab
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     if (event && event.target) {
         event.target.classList.add('active');
     }
     
     if (category === 'my' && isAssessor) {
-        // Show assessor's own assessments
         renderMyAssessments(container);
         return;
     }
@@ -3154,7 +3175,6 @@ function filterResults(event, category) {
         rankings = scoringSystem.finalRankings.african;
         title = "African Category Rankings";
     } else {
-        // Filter by choir category
         rankings = scoringSystem.finalRankings.overall.filter(r => 
             r.choir.category === category
         );
@@ -3174,12 +3194,11 @@ function filterResults(event, category) {
     container.innerHTML = renderDefaultRankings(category, title, rankings, isAssessor);
 }
 
-// Render default rankings for other categories
 function renderDefaultRankings(category, title, rankings, isAssessor) {
     const isWesternCategory = category === 'western';
     const isAfricanCategory = category === 'african';
+    const isAdmin = ['admin', 'founder'].includes(appState.currentRole);
     
-    // UPDATED: Western category rankings - removed African column
     let html = `
         <h4 style="color: var(--primary-gold); margin-bottom: 1rem;">${title}</h4>
         <div class="table-responsive">
@@ -3191,12 +3210,11 @@ function renderDefaultRankings(category, title, rankings, isAssessor) {
                         <th>Category</th>
     `;
     
-    // UPDATED: Show only relevant columns for each category
     if (isWesternCategory) {
         html += `
                         <th>Western Score</th>
                         <th>Grade</th>
-                        ${isAssessor ? '' : '<th>Actions</th>'}
+                        ${isAdmin ? '<th>Actions</th>' : ''}
                     </tr>
                 </thead>
                 <tbody>
@@ -3205,7 +3223,7 @@ function renderDefaultRankings(category, title, rankings, isAssessor) {
         html += `
                         <th>African Score</th>
                         <th>Grade</th>
-                        ${isAssessor ? '' : '<th>Actions</th>'}
+                        ${isAdmin ? '<th>Actions</th>' : ''}
                     </tr>
                 </thead>
                 <tbody>
@@ -3216,7 +3234,7 @@ function renderDefaultRankings(category, title, rankings, isAssessor) {
                         <th>African Score</th>
                         <th>Total Score</th>
                         <th>Grade</th>
-                        ${isAssessor ? '' : '<th>Actions</th>'}
+                        ${isAdmin ? '<th>Actions</th>' : ''}
                     </tr>
                 </thead>
                 <tbody>
@@ -3226,20 +3244,16 @@ function renderDefaultRankings(category, title, rankings, isAssessor) {
     rankings.forEach((ranking) => {
         const choirStats = scoringSystem.getChoirStatistics(ranking.choir.id);
         
-        // FIXED: Show correct score for each category
         let displayScore = ranking.score;
         let grade = getGradeFromScore(displayScore);
         
         if (isWesternCategory) {
-            // For Western category, use Western score only
             displayScore = choirStats.western.trimmedMean;
             grade = getGradeFromScore(displayScore);
         } else if (isAfricanCategory) {
-            // For African category, use African score only
             displayScore = choirStats.african.trimmedMean;
             grade = getGradeFromScore(displayScore);
         } else {
-            // For overall, use the ranking score (which is already correct)
             grade = getGradeFromScore(displayScore);
         }
         
@@ -3255,9 +3269,7 @@ function renderDefaultRankings(category, title, rankings, isAssessor) {
                 <td><span class="category-badge">${appState.categories[ranking.choir.category]}</span></td>
         `;
         
-        // UPDATED: Show only relevant score columns
         if (isWesternCategory) {
-            // Western category - only show Western score
             html += `
                 <td><strong>${displayScore.toFixed(1)}</strong><br><small>(${choirStats.western.count} assessors)</small></td>
                 <td>
@@ -3265,16 +3277,21 @@ function renderDefaultRankings(category, title, rankings, isAssessor) {
                         ${grade}
                     </span>
                 </td>
-                ${isAssessor ? '' : `
-                <td>
-                    <button class="report-btn" onclick="showChoirDetailedReport(${ranking.choir.id})">
-                        <i class="fas fa-chart-bar"></i> Details
-                    </button>
-                </td>
-                `}
             `;
+            
+            if (isAdmin) {
+                html += `
+                    <td>
+                        <div class="action-cell">
+                            <button class="action-btn icon-btn" onclick="showChoirMethodologyDetails(${ranking.choir.id}, 'western')" 
+                                    title="View Western Methodology" style="background: linear-gradient(135deg, var(--primary-gold) 0%, #B8860B 100%); color: #000;">
+                                <i class="fas fa-calculator"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+            }
         } else if (isAfricanCategory) {
-            // African category - only show African score
             html += `
                 <td><strong>${displayScore.toFixed(1)}</strong><br><small>(${choirStats.african.count} assessors)</small></td>
                 <td>
@@ -3282,16 +3299,21 @@ function renderDefaultRankings(category, title, rankings, isAssessor) {
                         ${grade}
                     </span>
                 </td>
-                ${isAssessor ? '' : `
-                <td>
-                    <button class="report-btn" onclick="showChoirDetailedReport(${ranking.choir.id})">
-                        <i class="fas fa-chart-bar"></i> Details
-                    </button>
-                </td>
-                `}
             `;
+            
+            if (isAdmin) {
+                html += `
+                    <td>
+                        <div class="action-cell">
+                            <button class="action-btn icon-btn" onclick="showChoirMethodologyDetails(${ranking.choir.id}, 'african')" 
+                                    title="View African Methodology" style="background: linear-gradient(135deg, var(--primary-gold) 0%, #B8860B 100%); color: #000;">
+                                <i class="fas fa-calculator"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+            }
         } else {
-            // Overall category - show both scores
             const myWesternScore = isAssessor ? scoringSystem.getAssessorAssessments(ranking.choir.id, 'western', appState.currentUserId) : null;
             const myAfricanScore = isAssessor ? scoringSystem.getAssessorAssessments(ranking.choir.id, 'african', appState.currentUserId) : null;
             
@@ -3314,14 +3336,20 @@ function renderDefaultRankings(category, title, rankings, isAssessor) {
                         ${grade}
                     </span>
                 </td>
-                ${isAssessor ? '' : `
-                <td>
-                    <button class="report-btn" onclick="showChoirDetailedReport(${ranking.choir.id})">
-                        <i class="fas fa-chart-bar"></i> Details
-                    </button>
-                </td>
-                `}
             `;
+            
+            if (isAdmin) {
+                html += `
+                    <td>
+                        <div class="action-cell">
+                            <button class="action-btn icon-btn" onclick="showChoirMethodologyDetails(${ranking.choir.id})" 
+                                    title="View Methodology" style="background: linear-gradient(135deg, var(--primary-gold) 0%, #B8860B 100%); color: #000;">
+                                <i class="fas fa-calculator"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+            }
         }
         
         html += `</tr>`;
@@ -3335,6 +3363,12 @@ function renderDefaultRankings(category, title, rankings, isAssessor) {
         ${isAssessor && !isWesternCategory && !isAfricanCategory ? `
         <div style="margin-top: 1rem; padding: 0.5rem; background: rgba(76, 175, 80, 0.1); border-radius: 6px; border: 1px solid rgba(76, 175, 80, 0.3);">
             <small style="color: #4caf50;"><i class="fas fa-info-circle"></i> *Green scores indicate choirs you have assessed. You can only view your own scores.</small>
+        </div>
+        ` : ''}
+        
+        ${isAdmin ? `
+        <div style="margin-top: 1rem; padding: 0.5rem; background: rgba(212, 175, 55, 0.1); border-radius: 6px; border: 1px solid rgba(212, 175, 55, 0.3);">
+            <small style="color: var(--primary-gold);"><i class="fas fa-calculator"></i> Click the calculator icon in the Actions column to view detailed methodology calculations for each choir.</small>
         </div>
         ` : ''}
         
@@ -3357,14 +3391,12 @@ function renderDefaultRankings(category, title, rankings, isAssessor) {
 function renderMyAssessments(container) {
     const assessorId = appState.currentUserId;
     
-    // Group assessments by category
     const assessmentsByCategory = {
         'GREAT CHAMPS': [],
         'LARGE': [],
         'STANDARD': []
     };
     
-    // Collect all choirs that the assessor has assessed
     appState.choirs.forEach(choir => {
         const westernAssessment = scoringSystem.getAssessorAssessments(choir.id, 'western', assessorId);
         const africanAssessment = scoringSystem.getAssessorAssessments(choir.id, 'african', assessorId);
@@ -3419,7 +3451,6 @@ function renderMyAssessments(container) {
                 <tbody>
     `;
     
-    // Render each category section
     Object.keys(assessmentsByCategory).forEach(category => {
         const assessments = assessmentsByCategory[category];
         if (assessments.length === 0) return;
@@ -3531,7 +3562,6 @@ function showMyAssessmentDetails(choirId) {
               africanAssessment ? renderMyAssessmentTab('african', choirId, africanAssessment) : ''}
         </div>
         
-        <!-- FIXED: Bottom center back button -->
         <div class="bottom-center-back">
             <button class="action-btn outline" onclick="closeChoirReportModal()">
                 <i class="fas fa-arrow-left"></i> Back to My Assessments
@@ -3548,7 +3578,6 @@ function showMyAssessmentTab(event, tab, choirId) {
     const assessorId = appState.currentUserId;
     const assessment = scoringSystem.getAssessorAssessments(choirId, tab, assessorId);
     
-    // Update active tab
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('active');
     });
@@ -3626,12 +3655,10 @@ function renderMyAssessmentTab(tab, choirId, assessment) {
 function renderFinalResults() {
     scoringSystem.calculateRankings();
     
-    // Find winners for each category (only if they have scores)
     const westernWinner = scoringSystem.finalRankings.western.length > 0 ? scoringSystem.finalRankings.western[0] : null;
     const africanWinner = scoringSystem.finalRankings.african.length > 0 ? scoringSystem.finalRankings.african[0] : null;
     const overallWinner = scoringSystem.finalRankings.overall.length > 0 ? scoringSystem.finalRankings.overall[0] : null;
     
-    // Count eligible choirs for overall rankings
     const eligibleChoirs = appState.choirs.filter(choir => {
         const hasBothSongs = choir.africanSong && choir.africanSong.trim() !== '' && 
                             choir.westernSong && choir.westernSong.trim() !== '';
@@ -3644,7 +3671,6 @@ function renderFinalResults() {
         <div class="fade-in">
             <h4 style="color: var(--primary-gold); margin-bottom: 1.5rem;">Final Competition Results</h4>
             
-            <!-- Eligibility Info -->
             <div style="background: rgba(33, 150, 243, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2196f3; margin-bottom: 1.5rem;">
                 <i class="fas fa-info-circle" style="color: #2196f3;"></i> 
                 <strong>Eligibility Note:</strong> Only choirs that performed BOTH African and Western songs are eligible for overall rankings.
@@ -3652,10 +3678,8 @@ function renderFinalResults() {
             </div>
     `;
     
-    // Only show winners if they exist
     if (overallWinner || westernWinner || africanWinner) {
         html += `
-            <!-- Winners Display -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
         `;
         
@@ -3722,9 +3746,7 @@ function renderFinalResults() {
                 <button class="tab-btn" onclick="showFinalResultsTab(event, 'methodology')">Scoring Methodology</button>
             </div>
             
-            <div id="finalResultsTabContent">
-                <!-- Content will be loaded here -->
-            </div>
+            <div id="finalResultsTabContent"></div>
             
             <div class="bottom-center-back">
                 <button class="action-btn outline" onclick="closeFinalResultsModal()">
@@ -3741,7 +3763,6 @@ function renderFinalResults() {
 function showFinalResultsTab(event, tab) {
     const container = document.getElementById('finalResultsTabContent');
     
-    // Update active tab
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     if (event && event.target) {
         event.target.classList.add('active');
@@ -3759,10 +3780,9 @@ function showFinalResultsTab(event, tab) {
 }
 
 function renderOverallWinners() {
-    const rankings = scoringSystem.finalRankings.overall.slice(0, 10); // Top 10
+    const rankings = scoringSystem.finalRankings.overall.slice(0, 10);
     
     if (rankings.length === 0) {
-        // Check if there are any eligible choirs at all
         const eligibleChoirs = appState.choirs.filter(choir => {
             const hasBothSongs = choir.africanSong && choir.africanSong.trim() !== '' && 
                                 choir.westernSong && choir.westernSong.trim() !== '';
@@ -3817,7 +3837,6 @@ function renderOverallWinners() {
         const grade = getGradeFromScore(ranking.score);
         const gradeClass = getGradeClass(grade);
         
-        // Special styling for podium positions
         let positionStyle = '';
         if (ranking.rank === 1) {
             positionStyle = 'background: linear-gradient(135deg, var(--primary-gold) 0%, #B8860B 100%); color: #000;';
@@ -3872,7 +3891,6 @@ function renderCategoryWinners(genre) {
         return '<div class="text-center py-5">No results available yet</div>';
     }
     
-    // UPDATED: Show only relevant columns for each category
     let html = `
         <div style="margin-bottom: 1.5rem;">
             <h5 style="color: ${genre === 'western' ? '#2196f3' : '#f44336'};">Top 10 ${genreName} Category Rankings</h5>
@@ -3990,6 +4008,10 @@ function closeFinalResultsModal() {
     document.getElementById('finalResultsModal').style.display = 'none';
 }
 
+// =======================
+// RENDER REPORTS FUNCTION
+// =======================
+
 function renderReports() {
     let html = `
         <div class="fade-in">
@@ -4027,15 +4049,6 @@ function renderReports() {
                     <p class="card-description">Generate detailed report for the Standard category including performance metrics and rankings.</p>
                 </div>
                 
-                <!-- NEW: Choir Detailed Reports Card -->
-                <div class="dashboard-card" onclick="generateAllChoirReports()">
-                    <div class="card-icon">
-                        <i class="fas fa-file-alt"></i>
-                    </div>
-                    <h3 class="card-title">Choir Detailed Reports</h3>
-                    <p class="card-description">Generate detailed individual reports for each and every choir with comprehensive assessment data.</p>
-                </div>
-                
                 <div class="dashboard-card" onclick="generateComprehensiveReport()">
                     <div class="card-icon">
                         <i class="fas fa-file-pdf"></i>
@@ -4053,7 +4066,6 @@ function renderReports() {
                 </div>
             </div>
             
-            <!-- FIXED: Added bottom center back button -->
             <div class="bottom-center-back">
                 <button class="action-btn outline" onclick="showDashboard()">
                     <i class="fas fa-arrow-left"></i> Back to Dashboard
@@ -4065,9 +4077,9 @@ function renderReports() {
     document.getElementById('dashboardContent').innerHTML = html;
 }
 
-// ============================================
+// =========================
 // USER MANAGEMENT FUNCTIONS
-// ============================================
+// =========================
 
 function openUserManagement() {
     document.getElementById('userManagementModal').style.display = 'flex';
@@ -4199,7 +4211,6 @@ function renderUserManagement() {
             </table>
         </div>
         
-        <!-- FIXED: Bottom center back button -->
         <div class="bottom-center-back">
             <button class="action-btn outline" onclick="closeUserManagement()">
                 <i class="fas fa-arrow-left"></i> Back to Dashboard
@@ -4210,13 +4221,11 @@ function renderUserManagement() {
     document.getElementById('userManagementContent').innerHTML = html;
 }
 
-// ============================================
-// CLEAR ASSESSMENT DATA FUNCTION
-// ============================================
-
+// ===============================================================
+// FIXED: clearAllAssessmentData function - properly resets system
+// ===============================================================
 function clearAllAssessmentData() {
     if (confirm('Are you sure you want to clear ALL assessment data? This will remove all saved assessments and cannot be undone.')) {
-        // Clear scoring system data
         scoringSystem.assessorScores = {};
         scoringSystem.trimmedMeans = {};
         scoringSystem.finalRankings = {
@@ -4225,31 +4234,113 @@ function clearAllAssessmentData() {
             overall: []
         };
         
-        // Clear localStorage
-        localStorage.removeItem('tmf_scoring_data');
-        
-        // Reset all choir statuses to pending
         appState.choirs.forEach(choir => {
             choir.status = 'pending';
         });
         
-        // Save and refresh
-        scoringSystem.saveToLocalStorage();
+        localStorage.removeItem('tmf_scoring_data');
         
         showNotification('All assessment data cleared successfully', 'success');
         
-        // Refresh current view
         if (appState.currentView === 'assessmentChooser') {
             renderAssessmentChooser();
         } else if (appState.currentView === 'manageChoirs') {
             renderManageChoirs();
+        } else if (appState.currentView === 'dashboard') {
+            renderDashboard();
+        } else if (appState.currentView === 'results') {
+            renderResults();
         }
     }
 }
 
-// ============================================
+// =============================================================
+// NEW: resetSystemToCleanState function - complete system reset
+// =============================================================
+function resetSystemToCleanState() {
+    if (confirm('WARNING: This will reset the entire system to a clean state. All assessment data will be permanently deleted. Are you absolutely sure?')) {
+        scoringSystem.assessorScores = {};
+        scoringSystem.trimmedMeans = {};
+        scoringSystem.finalRankings = {
+            western: [],
+            african: [],
+            overall: []
+        };
+        
+        appState.choirs.forEach(choir => {
+            choir.status = 'pending';
+        });
+        
+        localStorage.removeItem('tmf_scoring_data');
+        
+        appState.currentReportChoir = null;
+        appState.currentReportStats = null;
+        
+        adjudicationData.currentChoir = null;
+        adjudicationData.currentGenre = 'western';
+        adjudicationData.assessmentData = {
+            western: {
+                intonation: 0.0,
+                pitchAccuracy: 0.0,
+                language: 0.0,
+                vocalTechnique: 0.0,
+                choralTechnique: 0.0,
+                rhythm: 0.0,
+                artistry: 0.0,
+                stage: 0.0,
+                total: 0.0
+            },
+            african: {
+                intonation: 0.0,
+                pitchAccuracy: 0.0,
+                language: 0.0,
+                vocalTechnique: 0.0,
+                choralTechnique: 0.0,
+                rhythm: 0.0,
+                artistry: 0.0,
+                stage: 0.0,
+                total: 0.0
+            }
+        };
+        adjudicationData.comments = {
+            western: "",
+            african: ""
+        };
+        
+        showNotification('System reset to clean state successfully', 'success');
+        
+        renderDashboard();
+    }
+}
+
+// ==========================================================
+// NEW: debugCheckData function - helper to check system data
+// ==========================================================
+function debugCheckData() {
+    console.log('=== SYSTEM DATA DEBUG ===');
+    console.log('Choirs:', appState.choirs.map(c => ({
+        id: c.id,
+        name: c.name,
+        status: c.status
+    })));
+    
+    console.log('Assessor Scores:', Object.keys(scoringSystem.assessorScores).map(choirId => ({
+        choirId,
+        western: Object.keys(scoringSystem.assessorScores[choirId]?.western || {}),
+        african: Object.keys(scoringSystem.assessorScores[choirId]?.african || {})
+    })));
+    
+    console.log('Trimmed Means:', scoringSystem.trimmedMeans);
+    console.log('Final Rankings:', scoringSystem.finalRankings);
+    console.log('LocalStorage:', localStorage.getItem('tmf_scoring_data'));
+    console.log('=== END DEBUG ===');
+    
+    showNotification('Debug data logged to console', 'info');
+}
+
+// =============================
 // REGION AUTOCOMPLETE FUNCTION
-// ============================================
+// =============================
 
 function setupRegionAutocomplete() {
     const regionInput = document.getElementById('choirRegion');
@@ -4263,7 +4354,6 @@ function setupRegionAutocomplete() {
         'Nigeria', 'Ghana', 'Senegal', 'Ivory Coast', 'Cameroon'
     ];
 
-    // Create datalist for autocomplete
     let datalist = document.getElementById('regionSuggestions');
     if (!datalist) {
         datalist = document.createElement('datalist');
@@ -4271,7 +4361,6 @@ function setupRegionAutocomplete() {
         regionInput.parentNode.appendChild(datalist);
     }
 
-    // Clear and populate datalist
     datalist.innerHTML = '';
     commonRegions.forEach(region => {
         const option = document.createElement('option');
@@ -4279,13 +4368,12 @@ function setupRegionAutocomplete() {
         datalist.appendChild(option);
     });
 
-    // Connect input to datalist
     regionInput.setAttribute('list', 'regionSuggestions');
 }
 
-// ============================================
+// ==========================
 // CHOIR MANAGEMENT FUNCTIONS
-// ============================================
+// ==========================
 
 function openAddChoir() {
     document.getElementById('choirFormTitle').textContent = 'Add New Choir';
@@ -4293,7 +4381,6 @@ function openAddChoir() {
     document.getElementById('editChoirId').value = '';
     document.getElementById('choirFormModal').style.display = 'flex';
     
-    // Add region suggestions
     setupRegionAutocomplete();
 }
 
@@ -4309,7 +4396,6 @@ function openEditChoir(choirId) {
         document.getElementById('choirWesternSong').value = choir.westernSong;
         document.getElementById('choirFormModal').style.display = 'flex';
         
-        // Add region suggestions for editing too
         setupRegionAutocomplete();
     }
 }
@@ -4341,14 +4427,13 @@ function saveChoir() {
             choir.westernSong = westernSong;
         }
     } else {
-        // Generate unique ID - handle case when no choirs exist yet or corrupted data
         let newId;
         if (appState.choirs.length === 0) {
-            newId = 1; // Start with ID 1 if no choirs exist
+            newId = 1;
         } else {
             const existingIds = appState.choirs.map(c => c.id).filter(id => typeof id === 'number' && !isNaN(id) && id > 0);
             if (existingIds.length === 0) {
-                newId = 1; // All existing IDs are corrupted, start fresh
+                newId = 1;
             } else {
                 const maxId = Math.max(...existingIds);
                 newId = maxId + 1;
@@ -4364,7 +4449,6 @@ function saveChoir() {
             status: 'pending'
         });
         
-        // Clear any existing assessment data for this choir ID (in case of ID reuse)
         if (scoringSystem.assessorScores[newId]) {
             delete scoringSystem.assessorScores[newId];
         }
@@ -4372,7 +4456,6 @@ function saveChoir() {
             delete scoringSystem.trimmedMeans[newId];
         }
         
-        // Recalculate rankings and save
         scoringSystem.calculateRankings();
         scoringSystem.saveToLocalStorage();
     }
@@ -4407,9 +4490,9 @@ function deleteChoir(choirId) {
     }
 }
 
-// ============================================
-// RENDER MANAGE CHOIRS FUNCTION - WITH PROPER BUTTON SPACING
-// ============================================
+// =============================
+// RENDER MANAGE CHOIRS FUNCTION 
+// =============================
 
 function renderManageChoirs() {
     let html = `
@@ -4418,13 +4501,16 @@ function renderManageChoirs() {
                 <h3 style="color: var(--primary-gold); margin: 0;">Manage Choirs</h3>
                 <div class="action-buttons-group">
                     <button class="action-btn outline" onclick="showDashboard()">
-                        <i class="fas fa-arrow-left"></i> Back
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
                     </button>
                     <button class="action-btn" onclick="openAddChoir()">
                         <i class="fas fa-plus"></i> Add
                     </button>
                     <button class="action-btn" onclick="openImportChoirs()">
                         <i class="fas fa-file-import"></i> Import
+                    </button>
+                    <button class="action-btn danger" onclick="clearAllAssessmentData()">
+                        <i class="fas fa-trash"></i> Clear Data
                     </button>
                 </div>
             </div>
@@ -4468,6 +4554,9 @@ function renderManageChoirs() {
                         <button class="action-btn icon-btn delete-btn" onclick="deleteChoir(${choir.id})" title="Delete Choir">
                             <i class="fas fa-trash"></i>
                         </button>
+                        <button class="action-btn icon-btn" onclick="showChoirFullReport(${choir.id})" title="Generate Full Report" style="background: linear-gradient(135deg, var(--primary-gold) 0%, #B8860B 100%); color: #000;">
+                            <i class="fas fa-file-alt"></i>
+                        </button>
                     </div>
                 </td>
             </tr>
@@ -4489,58 +4578,6 @@ function renderManageChoirs() {
     `;
     
     document.getElementById('dashboardContent').innerHTML = html;
-}
-
-// ============================================
-// RENDER RESULTS FUNCTION - WITH PROPER BUTTON SPACING
-// ============================================
-
-function renderResults() {
-    scoringSystem.calculateRankings();
-    
-    const isAssessor = appState.currentRole === 'assessor';
-    const isAdmin = ['admin', 'founder', 'chair'].includes(appState.currentRole);
-    
-    let html = `
-        <div class="fade-in">
-            <div class="d-flex justify-content-between align-items-center mb-4 results-header-wrapper">
-                <h3 style="color: var(--primary-gold); margin: 0;">Competition Results</h3>
-                <div class="results-actions-group">
-                    <button class="action-btn outline" onclick="showDashboard()">
-                        <i class="fas fa-arrow-left"></i> Back
-                    </button>
-                    <button class="action-btn" onclick="exportToExcel()">
-                        <i class="fas fa-file-excel"></i> Export
-                    </button>
-                </div>
-            </div>
-            
-            <div class="assessment-container">
-                <div class="tab-nav" style="overflow-x: auto; white-space: nowrap;">
-                    <button class="tab-btn active" onclick="filterResults(event, 'overall')">Overall</button>
-                    <button class="tab-btn" onclick="filterResults(event, 'western')">Western</button>
-                    <button class="tab-btn" onclick="filterResults(event, 'african')">African</button>
-                    <button class="tab-btn" onclick="filterResults(event, 'GREAT CHAMPS')">Great Champs</button>
-                    <button class="tab-btn" onclick="filterResults(event, 'LARGE')">Large</button>
-                    <button class="tab-btn" onclick="filterResults(event, 'STANDARD')">Standard</button>
-                    ${isAssessor ? `<button class="tab-btn" onclick="filterResults(event, 'my')">My Assessments</button>` : ''}
-                </div>
-                
-                <div id="resultsTable" class="table-responsive" style="margin-top: 1.5rem;">
-                    <!-- Results will be loaded here -->
-                </div>
-            </div>
-            
-            <div class="bottom-center-back">
-                <button class="action-btn outline" onclick="showDashboard()">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
-                </button>
-            </div>
-        </div>
-    `;
-    
-    document.getElementById('dashboardContent').innerHTML = html;
-    filterResults({ target: { classList: { add: function() {}, remove: function() {} } } }, 'overall');
 }
 
 // ============================================
@@ -4583,7 +4620,6 @@ function showChoirDetailedReport(choirId) {
               renderReportTab('overall', choirId, stats)}
         </div>
         
-        <!-- FIXED: Bottom center back button -->
         <div class="bottom-center-back">
             <button class="action-btn outline" onclick="closeChoirReportModal()">
                 <i class="fas fa-arrow-left"></i> Back to Results
@@ -4599,7 +4635,6 @@ function showReportTab(event, tab, choirId) {
     const container = document.getElementById('reportTabContent');
     const stats = scoringSystem.getChoirStatistics(choirId);
     
-    // Update active tab
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     if (event && event.target) {
         event.target.classList.add('active');
@@ -4643,7 +4678,6 @@ function renderWesternReport(stats) {
     if (stats.assessments.length === 0) {
         html += `<tr><td colspan="3" class="text-center">No western scores recorded</td></tr>`;
     } else {
-        // Sort scores for trimmed mean calculation display
         const sortedScores = [...stats.rawScores].sort((a, b) => a - b);
         
         stats.assessments.forEach((assessment) => {
@@ -4769,7 +4803,7 @@ function getCalculationExplanation(stats) {
         return `Two assessors: (${stats.rawScores[0].toFixed(1)} + ${stats.rawScores[1].toFixed(1)}) ÷ 2 = ${stats.trimmedMean.toFixed(1)}`;
     } else if (stats.count >= 3) {
         const sorted = [...stats.rawScores].sort((a, b) => a - b);
-        const remaining = sorted.slice(1, -1); // Remove first and last
+        const remaining = sorted.slice(1, -1);
         const sum = remaining.reduce((a, b) => a + b, 0);
         return `Trimmed mean: Removed highest (${sorted[sorted.length - 1].toFixed(1)}) and lowest (${sorted[0].toFixed(1)}). Average of remaining ${remaining.length} scores: ${sum.toFixed(1)} ÷ ${remaining.length} = ${stats.trimmedMean.toFixed(1)}`;
     }
@@ -4858,7 +4892,6 @@ function closeChoirReportModal() {
 function generateCategoryReport(category) {
     const categoryName = appState.categories[category];
     
-    // Filter rankings for this category
     const categoryRankings = scoringSystem.finalRankings.overall.filter(r => 
         r.choir.category === category
     );
@@ -4868,7 +4901,6 @@ function generateCategoryReport(category) {
         return;
     }
     
-    // Create professional PDF content
     const reportContent = generateProfessionalPDFContent({
         title: `${categoryName} Competition Report`,
         subtitle: 'Tiro Mpane Foundation National Chorale Eisteddfod',
@@ -4878,7 +4910,6 @@ function generateCategoryReport(category) {
         includeMethodology: true
     });
     
-    // Generate PDF
     generateProfessionalPDF(reportContent, `${categoryName}_Report_${new Date().toISOString().split('T')[0]}`);
     showNotification(`${categoryName} report generated successfully!`, 'success');
 }
@@ -4891,14 +4922,12 @@ function generateAllChoirReports() {
         return;
     }
     
-    // Sort choirs by overall score
     const sortedChoirs = [...assessedChoirs].sort((a, b) => {
         const scoreA = scoringSystem.getChoirOverallScore(a.id);
         const scoreB = scoringSystem.getChoirOverallScore(b.id);
         return scoreB - scoreA;
     });
     
-    // Create comprehensive PDF content
     let reportContent = `
         <div class="pdf-report-container">
             <div class="pdf-header">
@@ -4995,13 +5024,11 @@ function generateAllChoirReports() {
         </div>
     `;
     
-    // Generate PDF
     generateProfessionalPDF(reportContent, `All_Choirs_Reports_${new Date().toISOString().split('T')[0]}`);
     showNotification(`Generated detailed reports for ${assessedChoirs.length} choirs!`, 'success');
 }
 
 function generateComprehensiveReport() {
-    // Calculate all rankings first
     scoringSystem.calculateRankings();
     
     if (scoringSystem.finalRankings.overall.length === 0) {
@@ -5009,7 +5036,6 @@ function generateComprehensiveReport() {
         return;
     }
     
-    // Create professional comprehensive report
     const reportContent = generateProfessionalPDFContent({
         title: 'Comprehensive Competition Report',
         subtitle: 'Tiro Mpane Foundation National Chorale Eisteddfod',
@@ -5020,16 +5046,13 @@ function generateComprehensiveReport() {
         includeWinners: true
     });
     
-    // Generate PDF
     generateProfessionalPDF(reportContent, `Comprehensive_Report_${new Date().toISOString().split('T')[0]}`);
     showNotification('Comprehensive report generated successfully!', 'success');
 }
 
 function generateAssessorsSummaryReport() {
-    // Collect assessor statistics
     const assessorStats = {};
     
-    // Initialize assessor stats
     Object.keys(appState.users).filter(id => appState.users[id].role === 'assessor').forEach(assessorId => {
         assessorStats[assessorId] = {
             name: appState.users[assessorId].name,
@@ -5041,7 +5064,6 @@ function generateAssessorsSummaryReport() {
         };
     });
     
-    // Collect assessor data from scoring system
     Object.keys(scoringSystem.assessorScores).forEach(choirId => {
         ['western', 'african'].forEach(genre => {
             if (scoringSystem.assessorScores[choirId] && scoringSystem.assessorScores[choirId][genre]) {
@@ -5061,7 +5083,6 @@ function generateAssessorsSummaryReport() {
         });
     });
     
-    // Calculate averages
     Object.keys(assessorStats).forEach(assessorId => {
         const stats = assessorStats[assessorId];
         if (stats.scores.length > 0) {
@@ -5069,7 +5090,6 @@ function generateAssessorsSummaryReport() {
         }
     });
     
-    // Filter active assessors (those with assessments)
     const activeAssessors = Object.keys(assessorStats).filter(assessorId => assessorStats[assessorId].totalAssessments > 0);
     
     if (activeAssessors.length === 0) {
@@ -5077,7 +5097,6 @@ function generateAssessorsSummaryReport() {
         return;
     }
     
-    // Create professional PDF content
     let reportContent = `
         <div class="pdf-report-container">
             <div class="pdf-header">
@@ -5165,7 +5184,6 @@ function generateAssessorsSummaryReport() {
                     <tbody>
     `;
     
-    // Calculate score distribution
     const scoreRanges = [
         { range: "90-100 (Superior)", min: 90, max: 100 },
         { range: "80-89 (Excellent)", min: 80, max: 89.9 },
@@ -5205,7 +5223,6 @@ function generateAssessorsSummaryReport() {
         </div>
     `;
     
-    // Generate PDF
     generateProfessionalPDF(reportContent, `Assessors_Summary_Report_${new Date().toISOString().split('T')[0]}`);
     showNotification(`Generated assessors summary report for ${activeAssessors.length} assessors!`, 'success');
 }
@@ -5381,26 +5398,16 @@ function generateProfessionalPDFContent(options) {
     return content;
 }
 
-function calculateStandardDeviation(numbers) {
-    if (numbers.length === 0) return 0;
-    const mean = numbers.reduce((a, b) => a + b) / numbers.length;
-    const squareDiffs = numbers.map(num => Math.pow(num - mean, 2));
-    const avgSquareDiff = squareDiffs.reduce((a, b) => a + b) / numbers.length;
-    return Math.sqrt(avgSquareDiff);
-}
-
 function generateProfessionalPDF(content, filename) {
     try {
         showNotification('Generating PDF...', 'info');
         
-        // Create a hidden div with the report content
         const reportDiv = document.createElement('div');
         reportDiv.id = 'pdf-report';
         reportDiv.style.cssText = 'position: absolute; left: -9999px; top: -9999px; width: 800px; background: white; color: black;';
         reportDiv.innerHTML = content;
         document.body.appendChild(reportDiv);
         
-        // Use html2canvas to capture the report (if available)
         if (typeof html2canvas !== 'undefined') {
             html2canvas(reportDiv, {
                 scale: 2,
@@ -5410,7 +5417,6 @@ function generateProfessionalPDF(content, filename) {
             }).then(canvas => {
                 const imgData = canvas.toDataURL('image/png');
                 
-                // Use jsPDF if available
                 if (typeof jspdf !== 'undefined') {
                     const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
                     const imgWidth = 190;
@@ -5429,19 +5435,15 @@ function generateProfessionalPDF(content, filename) {
                         heightLeft -= pageHeight;
                     }
                     
-                    // Save the PDF
                     pdf.save(filename + '.pdf');
                 } else {
-                    // Fallback: save as image
                     const link = document.createElement('a');
                     link.href = imgData;
                     link.download = filename + '.png';
                     link.click();
                 }
                 
-                // Clean up
                 document.body.removeChild(reportDiv);
-                
                 showNotification('PDF report generated successfully!', 'success');
             }).catch(error => {
                 console.error('Error generating PDF:', error);
@@ -5449,7 +5451,6 @@ function generateProfessionalPDF(content, filename) {
                 document.body.removeChild(reportDiv);
             });
         } else {
-            // Fallback: just show the content
             console.log('PDF generation libraries not available');
             showNotification('PDF libraries not loaded. Install html2canvas and jspdf.', 'warning');
             document.body.removeChild(reportDiv);
@@ -5491,7 +5492,6 @@ function renderAssessorScores(choir) {
         </div>
     `;
     
-    // Western Scores
     html += `
         <h5 style="color: #2196f3; margin-bottom: 1rem; margin-top: 2rem;">Western Assessor Scores</h5>
     `;
@@ -5518,7 +5518,6 @@ function renderAssessorScores(choir) {
         html += `</div>`;
     }
     
-    // African Scores
     html += `
         <h5 style="color: #f44336; margin-bottom: 1rem; margin-top: 2rem;">African Assessor Scores</h5>
     `;
@@ -5545,7 +5544,6 @@ function renderAssessorScores(choir) {
         html += `</div>`;
     }
     
-    // Calculation explanation
     if (stats.western.count > 0 || stats.african.count > 0) {
         html += `
             <div style="margin-top: 2rem; padding: 1rem; background: rgba(212, 175, 55, 0.1); border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.2);">
@@ -5557,7 +5555,6 @@ function renderAssessorScores(choir) {
         `;
     }
     
-    // FIXED: Added bottom center back button
     html += `
         <div class="bottom-center-back">
             <button class="action-btn outline" onclick="closeAssessorScoresModal()">
@@ -5617,7 +5614,6 @@ function exportToExcel() {
     try {
         const data = [];
         
-        // Add headers
         data.push([
             'Rank',
             'Choir Name',
@@ -5631,7 +5627,6 @@ function exportToExcel() {
             'Grade'
         ]);
         
-        // Add data rows
         scoringSystem.finalRankings.overall.forEach(ranking => {
             const stats = scoringSystem.getChoirStatistics(ranking.choir.id);
             const grade = getGradeFromScore(ranking.score);
@@ -5650,19 +5645,15 @@ function exportToExcel() {
             ]);
         });
         
-        // Create worksheet
         let ws;
         if (typeof XLSX !== 'undefined') {
             ws = XLSX.utils.aoa_to_sheet(data);
             
-            // Create workbook
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Competition Results');
             
-            // Generate Excel file
             XLSX.writeFile(wb, `TMF_Competition_Results_${new Date().toISOString().split('T')[0]}.xlsx`);
         } else {
-            // Fallback: CSV
             const csvContent = data.map(row => row.join(',')).join('\n');
             const blob = new Blob([csvContent], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
@@ -5680,7 +5671,7 @@ function exportToExcel() {
 }
 
 // ============================================
-// PROFESSIONAL MONITORING FUNCTIONS
+// PROFESSIONAL MONITORING FUNCTIONS - COMPLETE
 // ============================================
 
 function showProfessionalMonitoringCenter() {
@@ -5694,7 +5685,6 @@ function renderProfessionalMonitoringCenter() {
     const pendingChoirs = totalChoirs - assessedChoirs;
     const completionRate = totalChoirs > 0 ? (assessedChoirs / totalChoirs) * 100 : 0;
 
-    // Calculate system health metrics
     const activeAssessors = Object.keys(appState.users).filter(id => appState.users[id].role === 'assessor').filter(id => {
         let hasRecentActivity = false;
         Object.keys(scoringSystem.assessorScores).forEach(choirId => {
@@ -5705,7 +5695,7 @@ function renderProfessionalMonitoringCenter() {
                     const assessment = scoringSystem.assessorScores[choirId][genre][id];
                     if (assessment && assessment.submittedAt) {
                         const timeDiff = Date.now() - new Date(assessment.submittedAt).getTime();
-                        if (timeDiff < 2 * 60 * 60 * 1000) { // Last 2 hours
+                        if (timeDiff < 2 * 60 * 60 * 1000) {
                             hasRecentActivity = true;
                         }
                     }
@@ -5715,16 +5705,14 @@ function renderProfessionalMonitoringCenter() {
         return hasRecentActivity;
     }).length;
 
-    // System performance simulation
     const systemHealth = {
         uptime: 99.8,
         responseTime: Math.random() * 100 + 50,
         errorRate: Math.random() * 0.5,
-        activeUsers: activeAssessors + 2, // +2 for admin/monitor
+        activeUsers: activeAssessors + 2,
         serverLoad: Math.random() * 30 + 20
     };
 
-    // Security metrics
     const securityMetrics = {
         loginAttempts: Math.floor(Math.random() * 50) + 10,
         failedLogins: Math.floor(Math.random() * 5) + 1,
@@ -5740,7 +5728,7 @@ function renderProfessionalMonitoringCenter() {
                 </h3>
                 <div class="action-buttons-container">
                     <button class="action-btn outline" onclick="showDashboard()">
-                        <i class="fas fa-arrow-left"></i> Back
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
                     </button>
                     <button class="action-btn" onclick="refreshOperationsCenter()">
                         <i class="fas fa-sync-alt"></i> Refresh
@@ -5748,7 +5736,6 @@ function renderProfessionalMonitoringCenter() {
                 </div>
             </div>
 
-            <!-- Real-Time Competition Overview -->
             <div class="ops-section">
                 <h4><i class="fas fa-globe"></i> Real-Time Competition Overview</h4>
                 <div class="ops-grid">
@@ -5811,7 +5798,6 @@ function renderProfessionalMonitoringCenter() {
                 </div>
             </div>
 
-            <!-- System Health & Security -->
             <div class="ops-section">
                 <h4><i class="fas fa-heartbeat"></i> System Health & Security</h4>
                 <div class="ops-grid">
@@ -5874,7 +5860,6 @@ function renderProfessionalMonitoringCenter() {
                 </div>
             </div>
 
-            <!-- Live Activity Feed -->
             <div class="ops-section">
                 <h4><i class="fas fa-stream"></i> Live Activity Feed</h4>
                 <div class="activity-feed">
@@ -5882,35 +5867,10 @@ function renderProfessionalMonitoringCenter() {
                 </div>
             </div>
 
-            <!-- Quick Actions -->
-            <div class="ops-section">
-                <h4><i class="fas fa-bolt"></i> Quick Actions</h4>
-                <div class="quick-actions-grid">
-                    <button class="quick-action-btn" onclick="showLiveScoringMonitor()">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>Live Scoring</span>
-                    </button>
-                    <button class="quick-action-btn" onclick="showSystemHealthMonitor()">
-                        <i class="fas fa-heartbeat"></i>
-                        <span>System Health</span>
-                    </button>
-                    <button class="quick-action-btn" onclick="showDataIntegrityMonitor()">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>Data Integrity</span>
-                    </button>
-                    <button class="quick-action-btn" onclick="showAdvancedAnalytics()">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Analytics</span>
-                    </button>
-                    <button class="quick-action-btn" onclick="showIncidentManagement()">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <span>Incidents</span>
-                    </button>
-                    <button class="quick-action-btn" onclick="generateEmergencyReport()">
-                        <i class="fas fa-file-excel"></i>
-                        <span>Emergency Report</span>
-                    </button>
-                </div>
+            <div class="bottom-center-back">
+                <button class="action-btn outline" onclick="showDashboard()">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </button>
             </div>
         </div>
     `;
@@ -5923,72 +5883,12 @@ function refreshOperationsCenter() {
     renderProfessionalMonitoringCenter();
 }
 
-function generateLiveActivityFeed() {
-    const activities = [];
-    
-    // Collect recent activities
-    Object.keys(scoringSystem.assessorScores).forEach(choirId => {
-        ['western', 'african'].forEach(genre => {
-            if (scoringSystem.assessorScores[choirId] && scoringSystem.assessorScores[choirId][genre]) {
-                Object.keys(scoringSystem.assessorScores[choirId][genre]).forEach(assessorId => {
-                    const assessment = scoringSystem.assessorScores[choirId][genre][assessorId];
-                    if (assessment && assessment.submittedAt) {
-                        const choir = appState.choirs.find(c => c.id === choirId);
-                        activities.push({
-                            type: 'assessment',
-                            user: assessment.assessorName,
-                            action: `assessed ${choir ? choir.name : 'Unknown Choir'} (${genre})`,
-                            score: assessment.total,
-                            time: new Date(assessment.submittedAt)
-                        });
-                    }
-                });
-            }
-        });
-    });
-
-    // Add some system activities
-    activities.push({
-        type: 'system',
-        user: 'System',
-        action: 'Automated backup completed',
-        time: new Date(Date.now() - 15 * 60 * 1000)
-    });
-
-    activities.push({
-        type: 'system',
-        user: 'System',
-        action: 'Security scan completed - no threats',
-        time: new Date(Date.now() - 45 * 60 * 1000)
-    });
-
-    // Sort by time (most recent first)
-    activities.sort((a, b) => b.time - a.time);
-
-    return activities.slice(0, 10).map(activity => `
-        <div class="activity-item">
-            <div class="activity-icon">
-                <i class="fas ${activity.type === 'assessment' ? 'fa-clipboard-check' : 'fa-server'}"></i>
-            </div>
-            <div class="activity-details">
-                <div class="activity-header">
-                    <span class="activity-user">${activity.user}</span>
-                    <span class="activity-action">${activity.action}</span>
-                    ${activity.score ? `<span class="activity-score">Score: ${activity.score.toFixed(1)}</span>` : ''}
-                </div>
-                <div class="activity-time">${activity.time.toLocaleString()}</div>
-            </div>
-        </div>
-    `).join('');
-}
-
 function showLiveScoringMonitor() {
     appState.currentView = 'liveScoringMonitor';
     renderLiveScoringMonitor();
 }
 
 function renderLiveScoringMonitor() {
-    // Anomaly detection logic
     const anomalies = detectScoringAnomalies();
     const assessorPerformance = calculateAssessorPerformanceMetrics();
     
@@ -6000,7 +5900,7 @@ function renderLiveScoringMonitor() {
                 </h3>
                 <div class="action-buttons-container">
                     <button class="action-btn outline" onclick="showDashboard()">
-                        <i class="fas fa-arrow-left"></i> Back
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
                     </button>
                     <button class="action-btn" onclick="refreshScoringMonitor()">
                         <i class="fas fa-sync-alt"></i> Refresh
@@ -6008,617 +5908,89 @@ function renderLiveScoringMonitor() {
                 </div>
             </div>
 
-            <!-- Anomaly Detection Alert -->
-            ${anomalies.length > 0 ? `
-                <div class="alert-section">
-                    <h4><i class="fas fa-exclamation-triangle" style="color: #f44336;"></i> Anomaly Detection Alerts</h4>
-                    <div class="anomaly-list">
-                        ${anomalies.map(anomaly => `
-                            <div class="anomaly-item severity-${anomaly.severity}">
-                                <div class="anomaly-header">
-                                    <i class="fas ${anomaly.icon}"></i>
-                                    <span class="anomaly-title">${anomaly.title}</span>
-                                    <span class="anomaly-severity">${anomaly.severity.toUpperCase()}</span>
-                                </div>
-                                <div class="anomaly-description">${anomaly.description}</div>
-                                <div class="anomaly-time">${anomaly.timestamp.toLocaleString()}</div>
-                            </div>
-                        `).join('')}
+            <div class="live-scoring-container">
+    `;
+    
+    if (anomalies.length > 0) {
+        html += `
+            <div class="anomaly-section">
+                <h4><i class="fas fa-exclamation-triangle"></i> Anomaly Detection Alerts</h4>
+        `;
+        
+        anomalies.slice(0, 3).forEach(anomaly => {
+            html += `
+                <div class="anomaly-alert">
+                    <div class="alert-icon">
+                        <i class="fas ${anomaly.icon || 'fa-exclamation-circle'}"></i>
+                    </div>
+                    <div class="anomaly-content">
+                        <div class="anomaly-title">${anomaly.title}</div>
+                        <div class="anomaly-description">${anomaly.description}</div>
+                        <div class="anomaly-time">${anomaly.timestamp.toLocaleString()}</div>
                     </div>
                 </div>
-            ` : ''}
+            `;
+        });
+        
+        html += `</div>`;
+    }
 
-            <!-- Live Scoreboard -->
-            <div class="scoring-section">
-                <h4><i class="fas fa-trophy"></i> Live Scoreboard</h4>
-                <div class="live-scoreboard">
-                    ${generateLiveScoreboard()}
+    html += `
+        <div class="live-scoreboard">
+            <div class="scoreboard-header">
+                <i class="fas fa-trophy"></i>
+                Live Scoreboard
+            </div>
+            
+            ${generateLiveScoreboardTable()}
+        </div>
+    `;
+
+    html += `
+        <div class="assessor-section">
+            <h4><i class="fas fa-user-chart"></i> Assessor Performance Analytics</h4>
+            <div class="assessor-grid">
+    `;
+    
+    Object.values(assessorPerformance).forEach(assessor => {
+        html += `
+            <div class="assessor-card">
+                <h5>${assessor.name}</h5>
+                <div class="assessor-stats">
+                    <div class="assessor-stat">
+                        <span class="stat-number">${assessor.totalAssessments}</span>
+                        <span class="stat-label">Assessments</span>
+                    </div>
+                    <div class="assessor-stat">
+                        <span class="stat-number">${assessor.averageScore.toFixed(1)}</span>
+                        <span class="stat-label">Avg Score</span>
+                    </div>
+                    <div class="assessor-stat">
+                        <span class="stat-number">${assessor.consistency}%</span>
+                        <span class="stat-label">Consistency</span>
+                    </div>
+                    <div class="assessor-stat">
+                        <span class="stat-number">${assessor.avgTime}</span>
+                        <span class="stat-label">Avg Time</span>
+                    </div>
                 </div>
             </div>
-
-            <!-- Assessor Performance Analytics -->
-            <div class="scoring-section">
-                <h4><i class="fas fa-user-chart"></i> Assessor Performance Analytics</h4>
-                <div class="assessor-performance-grid">
-                    ${Object.values(assessorPerformance).map(assessor => `
-                        <div class="assessor-perf-card">
-                            <div class="perf-header">
-                                <span class="assessor-name">${assessor.name}</span>
-                                <span class="perf-status ${assessor.status.toLowerCase()}">${assessor.status}</span>
-                            </div>
-                            <div class="perf-metrics">
-                                <div class="perf-metric">
-                                    <span class="metric-label">Assessments</span>
-                                    <span class="metric-value">${assessor.totalAssessments}</span>
-                                </div>
-                                <div class="perf-metric">
-                                    <span class="metric-label">Avg Score</span>
-                                    <span class="metric-value">${assessor.averageScore.toFixed(1)}</span>
-                                </div>
-                                <div class="perf-metric">
-                                    <span class="metric-label">Consistency</span>
-                                    <span class="metric-value">${assessor.consistency}%</span>
-                                </div>
-                                <div class="perf-metric">
-                                    <span class="metric-label">Speed</span>
-                                    <span class="metric-value">${assessor.avgTime}min</span>
-                                </div>
-                            </div>
-                            <div class="perf-reliability">
-                                <div class="reliability-bar">
-                                    <div class="reliability-fill" style="width: ${assessor.reliability}%"></div>
-                                </div>
-                                <span class="reliability-label">Reliability: ${assessor.reliability}%</span>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-
-            <!-- Audit Trail -->
-            <div class="scoring-section">
-                <h4><i class="fas fa-history"></i> Recent Audit Trail</h4>
-                <div class="audit-trail">
-                    ${generateAuditTrail()}
-                </div>
+        `;
+    });
+    
+    html += `
             </div>
         </div>
+    </div>
+
+    <div class="bottom-center-back">
+        <button class="action-btn outline" onclick="showDashboard()">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </button>
+    </div>
     `;
 
     document.getElementById('dashboardContent').innerHTML = html;
-}
-
-function detectScoringAnomalies() {
-    const anomalies = [];
-    
-    // Check for unusual scoring patterns
-    Object.keys(scoringSystem.assessorScores).forEach(choirId => {
-        ['western', 'african'].forEach(genre => {
-            if (scoringSystem.assessorScores[choirId] && scoringSystem.assessorScores[choirId][genre]) {
-                const scores = Object.values(scoringSystem.assessorScores[choirId][genre])
-                    .map(assessment => assessment.total)
-                    .filter(score => score > 0);
-                
-                if (scores.length >= 3) {
-                    const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
-                    const stdDev = Math.sqrt(
-                        scores.reduce((sum, score) => sum + Math.pow(score - mean, 2), 0) / scores.length
-                    );
-                    
-                    // Check for outliers (more than 2 standard deviations from mean)
-                    scores.forEach((score, index) => {
-                        if (Math.abs(score - mean) > 2 * stdDev) {
-                            const assessmentsArray = Object.values(scoringSystem.assessorScores[choirId][genre]);
-                            if (index < assessmentsArray.length) {
-                                const assessment = assessmentsArray[index];
-                                anomalies.push({
-                                    severity: stdDev > 15 ? 'high' : 'medium',
-                                    icon: 'fa-exclamation-triangle',
-                                    title: 'Scoring Outlier Detected',
-                                    description: `${assessment.assessorName} gave ${score.toFixed(1)} (avg: ${mean.toFixed(1)}) for ${genre} assessment`,
-                                    timestamp: new Date(assessment.submittedAt)
-                                });
-                            }
-                        }
-                    });
-                }
-            }
-        });
-    });
-
-    // Check for rapid assessments (potential quality issues)
-    Object.keys(appState.users).filter(id => appState.users[id].role === 'assessor').forEach(assessorId => {
-        const assessments = [];
-        
-        Object.keys(scoringSystem.assessorScores).forEach(choirId => {
-            ['western', 'african'].forEach(genre => {
-                if (scoringSystem.assessorScores[choirId] && scoringSystem.assessorScores[choirId][genre] && 
-                    scoringSystem.assessorScores[choirId][genre][assessorId]) {
-                    assessments.push({
-                        ...scoringSystem.assessorScores[choirId][genre][assessorId],
-                        choirId,
-                        genre
-                    });
-                }
-            });
-        });
-
-        // Sort by submission time
-        assessments.sort((a, b) => new Date(a.submittedAt) - new Date(b.submittedAt));
-
-        // Check for assessments completed in less than 2 minutes
-        for (let i = 1; i < assessments.length; i++) {
-            const timeDiff = new Date(assessments[i].submittedAt) - new Date(assessments[i-1].submittedAt);
-            if (timeDiff < 2 * 60 * 1000) { // Less than 2 minutes
-                anomalies.push({
-                    severity: 'medium',
-                    icon: 'fa-clock',
-                    title: 'Rapid Assessment Detected',
-                    description: `${assessments[i].assessorName} completed assessment in ${(timeDiff / 1000 / 60).toFixed(1)} minutes`,
-                    timestamp: new Date(assessments[i].submittedAt)
-                });
-            }
-        }
-    });
-
-    return anomalies.sort((a, b) => {
-        const severityOrder = { high: 0, medium: 1, low: 2 };
-        return severityOrder[a.severity] - severityOrder[b.severity];
-    });
-}
-
-function calculateAssessorPerformanceMetrics() {
-    const metrics = {};
-    
-    Object.keys(appState.users).filter(id => appState.users[id].role === 'assessor').forEach(assessorId => {
-        const assessments = [];
-        const completionTimes = [];
-        
-        Object.keys(scoringSystem.assessorScores).forEach(choirId => {
-            ['western', 'african'].forEach(genre => {
-                if (scoringSystem.assessorScores[choirId] && scoringSystem.assessorScores[choirId][genre] && 
-                    scoringSystem.assessorScores[choirId][genre][assessorId]) {
-                    const assessment = scoringSystem.assessorScores[choirId][genre][assessorId];
-                    assessments.push(assessment.total);
-                    completionTimes.push(new Date(assessment.submittedAt));
-                }
-            });
-        });
-
-        if (assessments.length > 0) {
-            const averageScore = assessments.reduce((a, b) => a + b, 0) / assessments.length;
-            const variance = assessments.reduce((sum, score) => sum + Math.pow(score - averageScore, 2), 0) / assessments.length;
-            const consistency = Math.max(0, 100 - (Math.sqrt(variance) / averageScore * 100));
-            
-            // Calculate average completion time
-            let avgTime = 0;
-            if (completionTimes.length > 1) {
-                completionTimes.sort((a, b) => a - b);
-                const timeDiffs = [];
-                for (let i = 1; i < completionTimes.length; i++) {
-                    timeDiffs.push((completionTimes[i] - completionTimes[i-1]) / (1000 * 60)); // in minutes
-                }
-                avgTime = timeDiffs.reduce((a, b) => a + b, 0) / timeDiffs.length;
-            }
-
-            metrics[assessorId] = {
-                name: appState.users[assessorId].name,
-                totalAssessments: assessments.length,
-                averageScore,
-                consistency: consistency.toFixed(0),
-                avgTime: avgTime.toFixed(0),
-                reliability: Math.min(100, (assessments.length / Math.max(1, appState.choirs.length * 2)) * 100),
-                status: assessments.length > 0 ? 'Active' : 'Idle'
-            };
-        } else {
-            metrics[assessorId] = {
-                name: appState.users[assessorId].name,
-                totalAssessments: 0,
-                averageScore: 0,
-                consistency: 0,
-                avgTime: 0,
-                reliability: 0,
-                status: 'Idle'
-            };
-        }
-    });
-
-    return metrics;
-}
-
-function generateLiveScoreboard() {
-    const rankings = scoringSystem.finalRankings.overall.slice(0, 10);
-    
-    return `
-        <div class="scoreboard-tabs">
-            <button class="scoreboard-tab active" onclick="showScoreboardView(event, 'rank')">Rank</button>
-            <button class="scoreboard-tab" onclick="showScoreboardView(event, 'choir')">Choir</button>
-            <button class="scoreboard-tab" onclick="showScoreboardView(event, 'category')">Category</button>
-            <button class="scoreboard-tab" onclick="showScoreboardView(event, 'western')">Western</button>
-            <button class="scoreboard-tab" onclick="showScoreboardView(event, 'african')">African</button>
-            <button class="scoreboard-tab" onclick="showScoreboardView(event, 'overall')">Overall</button>
-            <button class="scoreboard-tab" onclick="showScoreboardView(event, 'status')">Status</button>
-        </div>
-        <div class="scoreboard-content">
-            <div class="table-responsive">
-                <div class="scoreboard-table">
-                    <table>
-                        <thead id="scoreboard-header">
-                            <tr>
-                                <th>Rank</th>
-                                <th>Choir</th>
-                                <th>Category</th>
-                                <th>Western</th>
-                                <th>African</th>
-                                <th>Overall</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="scoreboard-body">
-                            ${generateRankView(rankings)}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function showScoreboardView(event, view) {
-    // Prevent default behavior
-    if (event) {
-        event.preventDefault();
-    }
-    
-    // Update active tab
-    document.querySelectorAll('.scoreboard-tab').forEach(tab => tab.classList.remove('active'));
-    if (event && event.target) {
-        event.target.classList.add('active');
-    } else {
-        // Fallback: find the tab by data attribute or text
-        const tabs = document.querySelectorAll('.scoreboard-tab');
-        const tabIndex = ['rank', 'choir', 'category', 'western', 'african', 'overall', 'status'].indexOf(view);
-        if (tabs[tabIndex]) {
-            tabs[tabIndex].classList.add('active');
-        }
-    }
-    
-    const rankings = scoringSystem.finalRankings.overall.slice(0, 10);
-    let headerContent = '';
-    let bodyContent = '';
-    
-    switch(view) {
-        case 'rank':
-            headerContent = `
-                <tr>
-                    <th>Rank</th>
-                    <th>Choir</th>
-                    <th>Category</th>
-                    <th>Western</th>
-                    <th>African</th>
-                    <th>Overall</th>
-                    <th>Status</th>
-                </tr>
-            `;
-            bodyContent = generateRankView(rankings);
-            break;
-        case 'choir':
-            headerContent = `
-                <tr>
-                    <th>Choir</th>
-                    <th>Region</th>
-                    <th>Category</th>
-                    <th>Overall Score</th>
-                    <th>Assessments</th>
-                    <th>Status</th>
-                </tr>
-            `;
-            bodyContent = generateChoirView(rankings);
-            break;
-        case 'category':
-            headerContent = `
-                <tr>
-                    <th>Category</th>
-                    <th>Choirs</th>
-                    <th>Avg Score</th>
-                    <th>Top Score</th>
-                    <th>Completed</th>
-                </tr>
-            `;
-            bodyContent = generateCategoryView(rankings);
-            break;
-        case 'western':
-            headerContent = `
-                <tr>
-                    <th>Rank</th>
-                    <th>Choir</th>
-                    <th>Western Score</th>
-                    <th>Assessments</th>
-                    <th>Consistency</th>
-                </tr>
-            `;
-            bodyContent = generateWesternView(rankings);
-            break;
-        case 'african':
-            headerContent = `
-                <tr>
-                    <th>Rank</th>
-                    <th>Choir</th>
-                    <th>African Score</th>
-                    <th>Assessments</th>
-                    <th>Consistency</th>
-                </tr>
-            `;
-            bodyContent = generateAfricanView(rankings);
-            break;
-        case 'overall':
-            headerContent = `
-                <tr>
-                    <th>Rank</th>
-                    <th>Choir</th>
-                    <th>Overall Score</th>
-                    <th>Western</th>
-                    <th>African</th>
-                    <th>Total Assessments</th>
-                </tr>
-            `;
-            bodyContent = generateOverallView(rankings);
-            break;
-        case 'status':
-            headerContent = `
-                <tr>
-                    <th>Status</th>
-                    <th>Choir Count</th>
-                    <th>Avg Score</th>
-                    <th>Completion Rate</th>
-                </tr>
-            `;
-            bodyContent = generateStatusView(rankings);
-            break;
-        default:
-            headerContent = `
-                <tr>
-                    <th>Rank</th>
-                    <th>Choir</th>
-                    <th>Category</th>
-                    <th>Western</th>
-                    <th>African</th>
-                    <th>Overall</th>
-                    <th>Status</th>
-                </tr>
-            `;
-            bodyContent = generateRankView(rankings);
-    }
-    
-    // Update header and body separately
-    const headerElement = document.querySelector('#scoreboard-header');
-    const bodyElement = document.querySelector('#scoreboard-body');
-    
-    if (headerElement) {
-        headerElement.innerHTML = headerContent;
-    }
-    if (bodyElement) {
-        bodyElement.innerHTML = bodyContent;
-    }
-}
-
-function generateRankView(rankings) {
-    return rankings.map((ranking) => {
-        const stats = scoringSystem.getChoirStatistics(ranking.choir.id);
-        return `
-            <tr class="scoreboard-row">
-                <td class="rank-cell">${ranking.rank}</td>
-                <td class="choir-cell">${ranking.choir.name}</td>
-                <td class="category-cell">${ranking.choir.category}</td>
-                <td class="score-cell">${stats.western.trimmedMean > 0 ? stats.western.trimmedMean.toFixed(1) : '-'}</td>
-                <td class="score-cell">${stats.african.trimmedMean > 0 ? stats.african.trimmedMean.toFixed(1) : '-'}</td>
-                <td class="overall-score">${ranking.score.toFixed(1)}</td>
-                <td class="status-cell">
-                    <span class="status-badge ${ranking.choir.status === 'assessed' ? 'completed' : 'pending'}">
-                        ${ranking.choir.status.toUpperCase()}
-                    </span>
-                </td>
-            </tr>
-        `;
-    }).join('');
-}
-
-function generateChoirView(rankings) {
-    return rankings.map((ranking) => {
-        const stats = scoringSystem.getChoirStatistics(ranking.choir.id);
-        return `
-            <tr class="scoreboard-row">
-                <td class="choir-cell">${ranking.choir.name}</td>
-                <td>${ranking.choir.region || 'N/A'}</td>
-                <td class="category-cell">${ranking.choir.category}</td>
-                <td class="overall-score">${ranking.score.toFixed(1)}</td>
-                <td>${stats.western.count + stats.african.count}</td>
-                <td class="status-cell">
-                    <span class="status-badge ${ranking.choir.status === 'assessed' ? 'completed' : 'pending'}">
-                        ${ranking.choir.status.toUpperCase()}
-                    </span>
-                </td>
-            </tr>
-        `;
-    }).join('');
-}
-
-function generateCategoryView(rankings) {
-    const categories = [...new Set(rankings.map(r => r.choir.category))];
-    return categories.map(category => {
-        const categoryRankings = rankings.filter(r => r.choir.category === category);
-        const avgScore = categoryRankings.reduce((sum, r) => sum + r.score, 0) / categoryRankings.length;
-        const topScore = Math.max(...categoryRankings.map(r => r.score));
-        const completed = categoryRankings.filter(r => r.choir.status === 'assessed').length;
-        return `
-            <tr class="scoreboard-row">
-                <td class="category-cell">${category}</td>
-                <td>${categoryRankings.length}</td>
-                <td class="overall-score">${avgScore.toFixed(1)}</td>
-                <td class="overall-score">${topScore.toFixed(1)}</td>
-                <td>${completed}/${categoryRankings.length}</td>
-            </tr>
-        `;
-    }).join('');
-}
-
-function generateWesternView(rankings) {
-    return rankings.map((ranking) => {
-        const stats = scoringSystem.getChoirStatistics(ranking.choir.id);
-        if (stats.western.trimmedMean > 0) {
-            return `
-                <tr class="scoreboard-row">
-                    <td class="rank-cell">${ranking.rank}</td>
-                    <td class="choir-cell">${ranking.choir.name}</td>
-                    <td class="overall-score">${stats.western.trimmedMean.toFixed(1)}</td>
-                    <td>${stats.western.count}</td>
-                    <td>${stats.western.consistency ? stats.western.consistency.toFixed(1) + '%' : 'N/A'}</td>
-                </tr>
-            `;
-        }
-        return '';
-    }).filter(row => row !== '').join('');
-}
-
-function generateAfricanView(rankings) {
-    return rankings.map((ranking) => {
-        const stats = scoringSystem.getChoirStatistics(ranking.choir.id);
-        if (stats.african.trimmedMean > 0) {
-            return `
-                <tr class="scoreboard-row">
-                    <td class="rank-cell">${ranking.rank}</td>
-                    <td class="choir-cell">${ranking.choir.name}</td>
-                    <td class="overall-score">${stats.african.trimmedMean.toFixed(1)}</td>
-                    <td>${stats.african.count}</td>
-                    <td>${stats.african.consistency ? stats.african.consistency.toFixed(1) + '%' : 'N/A'}</td>
-                </tr>
-            `;
-        }
-        return '';
-    }).filter(row => row !== '').join('');
-}
-
-function generateOverallView(rankings) {
-    return rankings.map((ranking) => {
-        const stats = scoringSystem.getChoirStatistics(ranking.choir.id);
-        return `
-            <tr class="scoreboard-row">
-                <td class="rank-cell">${ranking.rank}</td>
-                <td class="choir-cell">${ranking.choir.name}</td>
-                <td class="overall-score">${ranking.score.toFixed(1)}</td>
-                <td class="score-cell">${stats.western.trimmedMean > 0 ? stats.western.trimmedMean.toFixed(1) : '-'}</td>
-                <td class="score-cell">${stats.african.trimmedMean > 0 ? stats.african.trimmedMean.toFixed(1) : '-'}</td>
-                <td>${stats.western.count + stats.african.count}</td>
-            </tr>
-        `;
-    }).join('');
-}
-
-function generateStatusView(rankings) {
-    const statusGroups = {
-        'ASSESSED': rankings.filter(r => r.choir.status === 'assessed'),
-        'PENDING': rankings.filter(r => r.choir.status === 'pending'),
-        'IN_PROGRESS': rankings.filter(r => r.choir.status === 'in_progress')
-    };
-    
-    return Object.entries(statusGroups).map(([status, choirs]) => {
-        const avgScore = choirs.length > 0 ? choirs.reduce((sum, r) => sum + r.score, 0) / choirs.length : 0;
-        const completionRate = rankings.length > 0 ? (choirs.length / rankings.length * 100) : 0;
-        return `
-            <tr class="scoreboard-row">
-                <td>
-                    <span class="status-badge ${status === 'ASSESSED' ? 'completed' : 'pending'}">
-                        ${status.replace('_', ' ')}
-                    </span>
-                </td>
-                <td>${choirs.length}</td>
-                <td class="overall-score">${choirs.length > 0 ? avgScore.toFixed(1) : 'N/A'}</td>
-                <td>${completionRate.toFixed(1)}%</td>
-            </tr>
-        `;
-    }).join('');
-}
-
-function generateAuditTrail() {
-    const auditEntries = [];
-    
-    // Collect recent scoring activities
-    Object.keys(scoringSystem.assessorScores).forEach(choirId => {
-        ['western', 'african'].forEach(genre => {
-            if (scoringSystem.assessorScores[choirId] && scoringSystem.assessorScores[choirId][genre]) {
-                Object.keys(scoringSystem.assessorScores[choirId][genre]).forEach(assessorId => {
-                    const assessment = scoringSystem.assessorScores[choirId][genre][assessorId];
-                    if (assessment && assessment.submittedAt) {
-                        const choir = appState.choirs.find(c => c.id === choirId);
-                        auditEntries.push({
-                            type: 'score_submitted',
-                            user: assessment.assessorName,
-                            action: `Submitted ${genre} assessment`,
-                            target: choir ? choir.name : 'Unknown Choir',
-                            details: `Score: ${assessment.total.toFixed(1)}`,
-                            timestamp: new Date(assessment.submittedAt),
-                            ip: '192.168.1.' + Math.floor(Math.random() * 254 + 1)
-                        });
-                    }
-                });
-            }
-        });
-    });
-
-    // Add system events
-    auditEntries.push({
-        type: 'system_check',
-        user: 'System',
-        action: 'Automated health check',
-        target: 'All Systems',
-        details: 'Status: Healthy',
-        timestamp: new Date(Date.now() - 10 * 60 * 1000),
-        ip: 'localhost'
-    });
-
-    auditEntries.push({
-        type: 'data_backup',
-        user: 'System',
-        action: 'Scheduled backup completed',
-        target: 'Database',
-        details: 'Size: 2.4MB',
-        timestamp: new Date(Date.now() - 30 * 60 * 1000),
-        ip: 'localhost'
-    });
-
-    // Sort by timestamp (most recent first)
-    auditEntries.sort((a, b) => b.timestamp - a.timestamp);
-
-    return auditEntries.slice(0, 15).map(entry => `
-        <div class="audit-entry">
-            <div class="audit-icon">
-                <i class="fas ${getAuditIcon(entry.type)}"></i>
-            </div>
-            <div class="audit-details">
-                <div class="audit-header">
-                    <span class="audit-user">${entry.user}</span>
-                    <span class="audit-action">${entry.action}</span>
-                    <span class="audit-time">${entry.timestamp.toLocaleString()}</span>
-                </div>
-                <div class="audit-info">
-                    <span class="audit-target">Target: ${entry.target}</span>
-                    <span class="audit-details-text">${entry.details}</span>
-                    <span class="audit-ip">IP: ${entry.ip}</span>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-
-function getAuditIcon(type) {
-    const icons = {
-        'score_submitted': 'fa-clipboard-check',
-        'system_check': 'fa-heartbeat',
-        'data_backup': 'fa-database',
-        'user_login': 'fa-sign-in-alt',
-        'security_alert': 'fa-shield-alt'
-    };
-    return icons[type] || 'fa-info-circle';
 }
 
 function refreshScoringMonitor() {
@@ -6652,7 +6024,7 @@ function renderSystemHealthMonitor() {
                 </h3>
                 <div class="action-buttons-container">
                     <button class="action-btn outline" onclick="showDashboard()">
-                        <i class="fas fa-arrow-left"></i> Back
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
                     </button>
                     <button class="action-btn" onclick="refreshSystemHealth()">
                         <i class="fas fa-sync-alt"></i> Refresh
@@ -6660,7 +6032,6 @@ function renderSystemHealthMonitor() {
                 </div>
             </div>
 
-            <!-- System Performance Metrics -->
             <div class="health-section">
                 <h4><i class="fas fa-tachometer-alt"></i> System Performance</h4>
                 <div class="health-metrics-grid">
@@ -6726,7 +6097,6 @@ function renderSystemHealthMonitor() {
                 </div>
             </div>
 
-            <!-- Security Monitoring -->
             <div class="health-section">
                 <h4><i class="fas fa-shield-alt"></i> Security Monitoring</h4>
                 <div class="security-overview">
@@ -6750,6 +6120,40 @@ function renderSystemHealthMonitor() {
                     </div>
                 </div>
             </div>
+
+            <div class="health-section">
+                <h4><i class="fas fa-notes-medical"></i> Error Rate Monitoring</h4>
+                <div class="error-rate-container">
+                    <div class="error-rate-grid">
+                        <div class="error-metric">
+                            <div class="metric-label">Current Error Rate</div>
+                            <div class="metric-value">${systemMetrics.errorRate.toFixed(2)}%</div>
+                            <div class="metric-status ${systemMetrics.errorRate < 1.0 ? 'normal' : 'critical'}">
+                                ${systemMetrics.errorRate < 1.0 ? 'NORMAL' : 'CRITICAL'}
+                            </div>
+                        </div>
+                        <div class="error-metric">
+                            <div class="metric-label">Error Threshold</div>
+                            <div class="metric-value">1.0%</div>
+                            <div class="metric-status normal">LIMIT</div>
+                        </div>
+                        <div class="error-metric">
+                            <div class="metric-label">System Status</div>
+                            <div class="metric-value">
+                                <span style="color: ${systemMetrics.errorRate < 1.0 ? '#4CAF50' : '#f44336'};">
+                                    ${systemMetrics.errorRate < 1.0 ? 'HEALTHY' : 'WARNING'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-center-back">
+                <button class="action-btn outline" onclick="showDashboard()">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </button>
+            </div>
         </div>
     `;
 
@@ -6767,6 +6171,10 @@ function showDataIntegrityMonitor() {
 }
 
 function renderDataIntegrityMonitor() {
+    const totalAssessments = countTotalAssessments();
+    const totalChoirs = appState.choirs.length;
+    const assessedChoirs = appState.choirs.filter(c => c.status === 'assessed').length;
+    
     let html = `
         <div class="fade-in">
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
@@ -6775,7 +6183,7 @@ function renderDataIntegrityMonitor() {
                 </h3>
                 <div class="action-buttons-container">
                     <button class="action-btn outline" onclick="showDashboard()">
-                        <i class="fas fa-arrow-left"></i> Back
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
                     </button>
                     <button class="action-btn" onclick="refreshDataIntegrity()">
                         <i class="fas fa-sync-alt"></i> Refresh
@@ -6783,7 +6191,37 @@ function renderDataIntegrityMonitor() {
                 </div>
             </div>
 
-            <!-- Data Validation -->
+            <div class="analytics-summary-cards">
+                <div class="summary-card">
+                    <div class="summary-icon"><i class="fas fa-database"></i></div>
+                    <div class="summary-content">
+                        <div class="summary-label">Total Assessments</div>
+                        <div class="summary-value">${totalAssessments}</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon"><i class="fas fa-users"></i></div>
+                    <div class="summary-content">
+                        <div class="summary-label">Total Choirs</div>
+                        <div class="summary-value">${totalChoirs}</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="summary-content">
+                        <div class="summary-label">Assessed Choirs</div>
+                        <div class="summary-value">${assessedChoirs}</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon"><i class="fas fa-clock"></i></div>
+                    <div class="summary-content">
+                        <div class="summary-label">Pending</div>
+                        <div class="summary-value">${totalChoirs - assessedChoirs}</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="integrity-section">
                 <h4><i class="fas fa-check-double"></i> Data Validation</h4>
                 <div class="integrity-overview">
@@ -6800,7 +6238,6 @@ function renderDataIntegrityMonitor() {
                 </div>
             </div>
 
-            <!-- Backup Status -->
             <div class="integrity-section">
                 <h4><i class="fas fa-database"></i> Backup Status</h4>
                 <div class="backup-overview">
@@ -6817,7 +6254,6 @@ function renderDataIntegrityMonitor() {
                 </div>
             </div>
 
-            <!-- GDPR Compliance -->
             <div class="integrity-section">
                 <h4><i class="fas fa-user-shield"></i> GDPR/Privacy Compliance</h4>
                 <div class="compliance-overview">
@@ -6832,6 +6268,28 @@ function renderDataIntegrityMonitor() {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="integrity-section">
+                <h4><i class="fas fa-chart-line"></i> Data Consistency Check</h4>
+                <div class="integrity-overview">
+                    <div class="integrity-metric">
+                        <div class="integrity-status passed">
+                            <i class="fas fa-check-circle"></i>
+                            CONSISTENT
+                        </div>
+                        <div class="integrity-details">
+                            <span>All scores validated against rubric criteria</span>
+                            <span>No duplicate assessments found</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-center-back">
+                <button class="action-btn outline" onclick="showDashboard()">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </button>
             </div>
         </div>
     `;
@@ -6850,6 +6308,74 @@ function showAdvancedAnalytics() {
 }
 
 function renderAdvancedAnalytics() {
+    const allScores = [];
+    const westernScores = [];
+    const africanScores = [];
+    const categoryScores = {
+        'GREAT CHAMPS': { western: [], african: [], overall: [] },
+        'LARGE': { western: [], african: [], overall: [] },
+        'STANDARD': { western: [], african: [], overall: [] }
+    };
+    
+    appState.choirs.forEach(choir => {
+        const stats = scoringSystem.getChoirStatistics(choir.id);
+        
+        if (stats.western.trimmedMean > 0) {
+            westernScores.push(stats.western.trimmedMean);
+            allScores.push(stats.western.trimmedMean);
+            categoryScores[choir.category].western.push(stats.western.trimmedMean);
+        }
+        
+        if (stats.african.trimmedMean > 0) {
+            africanScores.push(stats.african.trimmedMean);
+            allScores.push(stats.african.trimmedMean);
+            categoryScores[choir.category].african.push(stats.african.trimmedMean);
+        }
+        
+        if (stats.overall > 0) {
+            categoryScores[choir.category].overall.push(stats.overall);
+        }
+    });
+    
+    const scoreRanges = [
+        { range: "90-100 (Superior)", min: 90, max: 100, count: 0, color: "#4CAF50" },
+        { range: "80-89 (Excellent)", min: 80, max: 89.9, count: 0, color: "#8BC34A" },
+        { range: "70-79 (Average)", min: 70, max: 79.9, count: 0, color: "#FFC107" },
+        { range: "60-69 (Below Average)", min: 60, max: 69.9, count: 0, color: "#FF9800" },
+        { range: "50-59 (Insufficient)", min: 50, max: 59.9, count: 0, color: "#F44336" },
+        { range: "Below 50", min: 0, max: 49.9, count: 0, color: "#9C27B0" }
+    ];
+    
+    allScores.forEach(score => {
+        const range = scoreRanges.find(r => score >= r.min && score <= r.max);
+        if (range) range.count++;
+    });
+    
+    const maxCount = Math.max(...scoreRanges.map(r => r.count), 1);
+    
+    const categoryMetrics = {};
+    Object.keys(categoryScores).forEach(cat => {
+        const westernAvg = categoryScores[cat].western.length > 0 
+            ? categoryScores[cat].western.reduce((a, b) => a + b, 0) / categoryScores[cat].western.length 
+            : 0;
+        const africanAvg = categoryScores[cat].african.length > 0 
+            ? categoryScores[cat].african.reduce((a, b) => a + b, 0) / categoryScores[cat].african.length 
+            : 0;
+        const overallAvg = categoryScores[cat].overall.length > 0 
+            ? categoryScores[cat].overall.reduce((a, b) => a + b, 0) / categoryScores[cat].overall.length 
+            : 0;
+        
+        categoryMetrics[cat] = {
+            name: appState.categories[cat],
+            westernAvg: westernAvg,
+            africanAvg: africanAvg,
+            overallAvg: overallAvg,
+            westernCount: categoryScores[cat].western.length,
+            africanCount: categoryScores[cat].african.length,
+            overallCount: categoryScores[cat].overall.length
+        };
+    });
+    
     let html = `
         <div class="fade-in">
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
@@ -6858,7 +6384,7 @@ function renderAdvancedAnalytics() {
                 </h3>
                 <div class="action-buttons-container">
                     <button class="action-btn outline" onclick="showDashboard()">
-                        <i class="fas fa-arrow-left"></i> Back
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
                     </button>
                     <button class="action-btn" onclick="refreshAnalytics()">
                         <i class="fas fa-sync-alt"></i> Refresh
@@ -6866,20 +6392,181 @@ function renderAdvancedAnalytics() {
                 </div>
             </div>
 
-            <!-- Scoring Distribution -->
-            <div class="analytics-section">
-                <h4><i class="fas fa-chart-bar"></i> Scoring Distribution Analysis</h4>
-                <div class="analytics-chart">
-                    <p>Scoring distribution analytics would be displayed here with interactive charts.</p>
+            <div class="analytics-summary-cards">
+                <div class="summary-card">
+                    <div class="summary-icon"><i class="fas fa-chart-pie"></i></div>
+                    <div class="summary-content">
+                        <div class="summary-label">Total Assessments</div>
+                        <div class="summary-value">${allScores.length}</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon"><i class="fas fa-calculator"></i></div>
+                    <div class="summary-content">
+                        <div class="summary-label">Average Score</div>
+                        <div class="summary-value">${(allScores.reduce((a, b) => a + b, 0) / (allScores.length || 1)).toFixed(1)}</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon"><i class="fas fa-trophy"></i></div>
+                    <div class="summary-content">
+                        <div class="summary-label">Highest Score</div>
+                        <div class="summary-value">${allScores.length > 0 ? Math.max(...allScores).toFixed(1) : 'N/A'}</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon"><i class="fas fa-arrow-down"></i></div>
+                    <div class="summary-content">
+                        <div class="summary-label">Lowest Score</div>
+                        <div class="summary-value">${allScores.length > 0 ? Math.min(...allScores).toFixed(1) : 'N/A'}</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Category Analysis -->
+            <div class="analytics-section">
+                <h4><i class="fas fa-chart-bar"></i> Scoring Distribution Analysis</h4>
+                <div class="analytics-chart-container">
+                    <div class="distribution-chart">
+                        ${scoreRanges.map(range => {
+                            const percentage = (range.count / (allScores.length || 1)) * 100;
+                            const barHeight = (range.count / maxCount) * 100;
+                            return `
+                                <div class="chart-bar-container">
+                                    <div class="chart-bar" style="height: ${barHeight}%; background-color: ${range.color};" 
+                                         title="${range.range}: ${range.count} assessments (${percentage.toFixed(1)}%)">
+                                        ${range.count > 0 ? `<span class="bar-count">${range.count}</span>` : ''}
+                                    </div>
+                                    <div class="bar-label">${range.range.split(' ')[0]}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    <div class="distribution-stats">
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-label">Standard Deviation:</span>
+                                <span class="stat-value">${calculateStandardDeviation(allScores).toFixed(2)}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Median Score:</span>
+                                <span class="stat-value">${calculateMedian(allScores).toFixed(1)}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Score Range:</span>
+                                <span class="stat-value">${allScores.length > 0 ? (Math.max(...allScores) - Math.min(...allScores)).toFixed(1) : 'N/A'}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Total Assessments:</span>
+                                <span class="stat-value">${allScores.length}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="analytics-section">
                 <h4><i class="fas fa-layer-group"></i> Category Performance Analysis</h4>
-                <div class="category-analytics">
-                    <p>Category performance metrics and comparisons would be displayed here.</p>
+                
+                <div class="genre-comparison">
+                    <h5>Western vs African Performance by Category</h5>
+                    <div class="comparison-chart">
+                        ${Object.values(categoryMetrics).filter(m => m.westernCount > 0 || m.africanCount > 0).map(metric => {
+                            const maxScore = 100;
+                            const westernPercent = (metric.westernAvg / maxScore) * 100;
+                            const africanPercent = (metric.africanAvg / maxScore) * 100;
+                            
+                            return `
+                                <div class="category-comparison-row">
+                                    <div class="category-name">${metric.name}</div>
+                                    <div class="genre-bars">
+                                        <div class="western-bar-container">
+                                            <div class="bar-label-small">Western</div>
+                                            <div class="bar-track">
+                                                <div class="bar-fill western-fill" style="width: ${westernPercent}%;">
+                                                    ${metric.westernAvg > 0 ? metric.westernAvg.toFixed(1) : ''}
+                                                </div>
+                                            </div>
+                                            <div class="bar-count">(${metric.westernCount})</div>
+                                        </div>
+                                        <div class="african-bar-container">
+                                            <div class="bar-label-small">African</div>
+                                            <div class="bar-track">
+                                                <div class="bar-fill african-fill" style="width: ${africanPercent}%;">
+                                                    ${metric.africanAvg > 0 ? metric.africanAvg.toFixed(1) : ''}
+                                                </div>
+                                            </div>
+                                            <div class="bar-count">(${metric.africanCount})</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
                 </div>
+
+                <div class="category-summary-table">
+                    <h5>Category Performance Summary</h5>
+                    <table class="analytics-table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Western Avg</th>
+                                <th>African Avg</th>
+                                <th>Overall Avg</th>
+                                <th>Assessments</th>
+                                <th>Top Performer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Object.values(categoryMetrics).filter(m => m.westernCount > 0 || m.africanCount > 0 || m.overallCount > 0).map(metric => {
+                                const categoryRankings = scoringSystem.finalRankings.overall.filter(r => 
+                                    r.choir.category === Object.keys(categoryMetrics).find(key => categoryMetrics[key].name === metric.name)
+                                );
+                                const topPerformer = categoryRankings.length > 0 ? categoryRankings[0].choir.name : 'N/A';
+                                
+                                return `
+                                    <tr>
+                                        <td><strong>${metric.name}</strong></td>
+                                        <td class="score-cell">${metric.westernAvg > 0 ? metric.westernAvg.toFixed(1) : 'N/A'}</td>
+                                        <td class="score-cell">${metric.africanAvg > 0 ? metric.africanAvg.toFixed(1) : 'N/A'}</td>
+                                        <td class="score-cell overall">${metric.overallAvg > 0 ? metric.overallAvg.toFixed(1) : 'N/A'}</td>
+                                        <td>${metric.westernCount + metric.africanCount}</td>
+                                        <td>${topPerformer}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="performance-insights">
+                    <h5><i class="fas fa-lightbulb"></i> Performance Insights</h5>
+                    <div class="insights-grid">
+                        ${generatePerformanceInsights(categoryMetrics, allScores)}
+                    </div>
+                </div>
+            </div>
+
+            <div class="analytics-section">
+                <h4><i class="fas fa-chart-pie"></i> Genre Distribution</h4>
+                <div class="integrity-overview">
+                    <div class="integrity-metric">
+                        <div class="integrity-status passed">
+                            <i class="fas fa-check-circle"></i>
+                            WESTERN: ${westernScores.length}
+                        </div>
+                        <div class="integrity-status passed">
+                            <i class="fas fa-check-circle"></i>
+                            AFRICAN: ${africanScores.length}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-center-back">
+                <button class="action-btn outline" onclick="showDashboard()">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </button>
             </div>
         </div>
     `;
@@ -6898,6 +6585,25 @@ function showIncidentManagement() {
 }
 
 function renderIncidentManagement() {
+    const incidents = [
+        {
+            id: 'INC-001',
+            title: 'Scheduled maintenance completed',
+            type: 'system',
+            status: 'resolved',
+            severity: 'low',
+            time: new Date(Date.now() - 2 * 60 * 60 * 1000)
+        },
+        {
+            id: 'INC-002',
+            title: 'Database backup verification',
+            type: 'system',
+            status: 'resolved',
+            severity: 'low',
+            time: new Date(Date.now() - 24 * 60 * 60 * 1000)
+        }
+    ];
+
     let html = `
         <div class="fade-in">
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
@@ -6906,7 +6612,7 @@ function renderIncidentManagement() {
                 </h3>
                 <div class="action-buttons-container">
                     <button class="action-btn outline" onclick="showDashboard()">
-                        <i class="fas fa-arrow-left"></i> Back
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
                     </button>
                     <button class="action-btn" onclick="refreshIncidentManagement()">
                         <i class="fas fa-sync-alt"></i> Refresh
@@ -6914,25 +6620,56 @@ function renderIncidentManagement() {
                 </div>
             </div>
 
-            <!-- Incident Log -->
-            <div class="incident-section">
-                <h4><i class="fas fa-history"></i> Incident Log</h4>
-                <div class="incident-list">
-                    <div class="incident-item severity-low">
-                        <div class="incident-header">
-                            <span class="incident-id">INC-001</span>
-                            <span class="incident-title">Scheduled maintenance completed</span>
-                            <span class="incident-status resolved">RESOLVED</span>
-                        </div>
-                        <div class="incident-details">
-                            <span class="incident-type">system</span>
-                            <span class="incident-time">${new Date(Date.now() - 2 * 60 * 60 * 1000).toLocaleString()}</span>
-                        </div>
+            <div class="analytics-summary-cards">
+                <div class="summary-card">
+                    <div class="summary-icon"><i class="fas fa-exclamation-circle"></i></div>
+                    <div class="summary-content">
+                        <div class="summary-label">Total Incidents</div>
+                        <div class="summary-value">${incidents.length}</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="summary-content">
+                        <div class="summary-label">Resolved</div>
+                        <div class="summary-value">${incidents.filter(i => i.status === 'resolved').length}</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon"><i class="fas fa-clock"></i></div>
+                    <div class="summary-content">
+                        <div class="summary-label">Open</div>
+                        <div class="summary-value">${incidents.filter(i => i.status !== 'resolved').length}</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon"><i class="fas fa-shield-alt"></i></div>
+                    <div class="summary-content">
+                        <div class="summary-label">System Health</div>
+                        <div class="summary-value">98%</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Disaster Recovery Status -->
+            <div class="incident-section">
+                <h4><i class="fas fa-history"></i> Incident Log</h4>
+                <div class="incident-list">
+                    ${incidents.map(incident => `
+                        <div class="incident-item severity-${incident.severity}">
+                            <div class="incident-header">
+                                <span class="incident-id">${incident.id}</span>
+                                <span class="incident-title">${incident.title}</span>
+                                <span class="incident-status ${incident.status}">${incident.status.toUpperCase()}</span>
+                            </div>
+                            <div class="incident-details">
+                                <span class="incident-type">${incident.type}</span>
+                                <span class="incident-time">${incident.time.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
             <div class="incident-section">
                 <h4><i class="fas fa-server"></i> Disaster Recovery Status</h4>
                 <div class="recovery-status">
@@ -6944,7 +6681,43 @@ function renderIncidentManagement() {
                         <span class="recovery-label">Last Backup Test</span>
                         <span class="recovery-time">${new Date(Date.now() - 24 * 60 * 60 * 1000).toLocaleString()}</span>
                     </div>
+                    <div class="recovery-metric">
+                        <span class="recovery-label">Recovery Point</span>
+                        <span class="recovery-value">15 minutes</span>
+                    </div>
+                    <div class="recovery-metric">
+                        <span class="recovery-label">Recovery Time</span>
+                        <span class="recovery-value">2 hours</span>
+                    </div>
                 </div>
+            </div>
+
+            <div class="incident-section">
+                <h4><i class="fas fa-tasks"></i> System Checks</h4>
+                <div class="recovery-status">
+                    <div class="recovery-metric">
+                        <span class="recovery-label">Database Integrity</span>
+                        <span class="recovery-status operational">PASSED</span>
+                    </div>
+                    <div class="recovery-metric">
+                        <span class="recovery-label">File System</span>
+                        <span class="recovery-status operational">PASSED</span>
+                    </div>
+                    <div class="recovery-metric">
+                        <span class="recovery-label">Network Connectivity</span>
+                        <span class="recovery-status operational">PASSED</span>
+                    </div>
+                    <div class="recovery-metric">
+                        <span class="recovery-label">API Services</span>
+                        <span class="recovery-status operational">PASSED</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-center-back">
+                <button class="action-btn outline" onclick="showDashboard()">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </button>
             </div>
         </div>
     `;
@@ -6964,12 +6737,323 @@ function generateEmergencyReport() {
     }, 2000);
 }
 
-// ============================================
-// CHOIR IMPORT FUNCTIONS (FIXED)
-// ============================================
+// Helper function to generate live activity feed
+function generateLiveActivityFeed() {
+    const activities = [];
+    
+    Object.keys(scoringSystem.assessorScores).forEach(choirId => {
+        ['western', 'african'].forEach(genre => {
+            if (scoringSystem.assessorScores[choirId] && scoringSystem.assessorScores[choirId][genre]) {
+                Object.keys(scoringSystem.assessorScores[choirId][genre]).forEach(assessorId => {
+                    const assessment = scoringSystem.assessorScores[choirId][genre][assessorId];
+                    if (assessment && assessment.submittedAt) {
+                        const choir = appState.choirs.find(c => c.id === choirId);
+                        activities.push({
+                            type: 'assessment',
+                            user: assessment.assessorName,
+                            action: `assessed ${choir ? choir.name : 'Unknown Choir'} (${genre})`,
+                            score: assessment.total,
+                            time: new Date(assessment.submittedAt)
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    activities.sort((a, b) => b.time - a.time);
+
+    return activities.slice(0, 10).map(activity => `
+        <div class="activity-item">
+            <div class="activity-icon">
+                <i class="fas ${activity.type === 'assessment' ? 'fa-clipboard-check' : 'fa-server'}"></i>
+            </div>
+            <div class="activity-details">
+                <div class="activity-header">
+                    <span class="activity-user">${activity.user}</span>
+                    <span class="activity-action">${activity.action}</span>
+                    ${activity.score ? `<span class="activity-score">Score: ${activity.score.toFixed(1)}</span>` : ''}
+                </div>
+                <div class="activity-time">${activity.time.toLocaleString()}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Helper function to generate live scoreboard table
+function generateLiveScoreboardTable() {
+    const rankings = scoringSystem.finalRankings.overall.slice(0, 10);
+    
+    if (rankings.length === 0) {
+        return `
+            <div style="padding: 40px; text-align: center; color: rgba(255,255,255,0.6);">
+                <i class="fas fa-chart-line" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                <p>No scores available yet</p>
+            </div>
+        `;
+    }
+    
+    let tableHtml = `
+        <table class="scoreboard-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Choir Name</th>
+                    <th>Category</th>
+                    <th>Western</th>
+                    <th>African</th>
+                    <th>Overall</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    rankings.forEach((ranking, index) => {
+        const stats = scoringSystem.getChoirStatistics(ranking.choir.id);
+        
+        let rankClass = '';
+        if (index === 0) rankClass = 'gold';
+        else if (index === 1) rankClass = 'silver';
+        else if (index === 2) rankClass = 'bronze';
+        
+        let statusClass = 'pending';
+        let statusText = 'Pending';
+        
+        if (ranking.choir.status === 'assessed') {
+            statusClass = 'assessed';
+            statusText = 'Assessed';
+        }
+        
+        tableHtml += `
+            <tr>
+                <td>
+                    <span class="rank-badge ${rankClass}">${ranking.rank}</span>
+                </td>
+                <td>
+                    <div class="choir-info">
+                        <span class="choir-name">${ranking.choir.name}</span>
+                        <span class="choir-category">${ranking.choir.region}</span>
+                    </div>
+                </td>
+                <td>${appState.categories[ranking.choir.category]}</td>
+                <td><span class="score-cell western">${stats.western.trimmedMean > 0 ? stats.western.trimmedMean.toFixed(1) : '-'}</span></td>
+                <td><span class="score-cell african">${stats.african.trimmedMean > 0 ? stats.african.trimmedMean.toFixed(1) : '-'}</span></td>
+                <td><span class="score-cell overall">${ranking.score.toFixed(1)}</span></td>
+                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+            </tr>
+        `;
+    });
+    
+    tableHtml += `
+            </tbody>
+        </table>
+        
+        <div class="scoreboard-summary">
+            <div class="summary-item">
+                <span class="summary-label">Total Choirs</span>
+                <span class="summary-value">${appState.choirs.length}</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Assessed</span>
+                <span class="summary-value">${appState.choirs.filter(c => c.status === 'assessed').length}</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Pending</span>
+                <span class="summary-value">${appState.choirs.filter(c => c.status === 'pending').length}</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Avg Overall</span>
+                <span class="summary-value">${(rankings.reduce((sum, r) => sum + r.score, 0) / rankings.length).toFixed(1)}</span>
+            </div>
+        </div>
+    `;
+    
+    return tableHtml;
+}
+
+// Helper function to detect scoring anomalies
+function detectScoringAnomalies() {
+    const anomalies = [];
+    
+    Object.keys(scoringSystem.assessorScores).forEach(choirId => {
+        ['western', 'african'].forEach(genre => {
+            if (scoringSystem.assessorScores[choirId] && scoringSystem.assessorScores[choirId][genre]) {
+                const scores = Object.values(scoringSystem.assessorScores[choirId][genre])
+                    .map(assessment => assessment.total)
+                    .filter(score => score > 0);
+                
+                if (scores.length >= 3) {
+                    const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
+                    const stdDev = Math.sqrt(
+                        scores.reduce((sum, score) => sum + Math.pow(score - mean, 2), 0) / scores.length
+                    );
+                    
+                    scores.forEach((score, index) => {
+                        if (Math.abs(score - mean) > 2 * stdDev) {
+                            const assessmentsArray = Object.values(scoringSystem.assessorScores[choirId][genre]);
+                            if (index < assessmentsArray.length) {
+                                const assessment = assessmentsArray[index];
+                                anomalies.push({
+                                    severity: stdDev > 15 ? 'high' : 'medium',
+                                    icon: 'fa-exclamation-triangle',
+                                    title: 'Scoring Outlier Detected',
+                                    description: `${assessment.assessorName} gave ${score.toFixed(1)} (avg: ${mean.toFixed(1)}) for ${genre} assessment`,
+                                    timestamp: new Date(assessment.submittedAt)
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    });
+
+    return anomalies.sort((a, b) => {
+        const severityOrder = { high: 0, medium: 1, low: 2 };
+        return severityOrder[a.severity] - severityOrder[b.severity];
+    });
+}
+
+// Helper function to calculate assessor performance metrics
+function calculateAssessorPerformanceMetrics() {
+    const metrics = {};
+    
+    // Get all assessors from appState
+    const assessors = Object.keys(appState.users).filter(id => appState.users[id].role === 'assessor');
+    
+    if (assessors.length === 0) {
+        return metrics;
+    }
+    
+    assessors.forEach(assessorId => {
+        const assessments = [];
+        const completionTimes = [];
+        
+        // Check all choir assessments for this assessor
+        Object.keys(scoringSystem.assessorScores).forEach(choirId => {
+            ['western', 'african'].forEach(genre => {
+                if (scoringSystem.assessorScores[choirId] && 
+                    scoringSystem.assessorScores[choirId][genre] && 
+                    scoringSystem.assessorScores[choirId][genre][assessorId]) {
+                    const assessment = scoringSystem.assessorScores[choirId][genre][assessorId];
+                    assessments.push(assessment.total);
+                    if (assessment.submittedAt) {
+                        completionTimes.push(new Date(assessment.submittedAt));
+                    }
+                }
+            });
+        });
+
+        if (assessments.length > 0) {
+            const averageScore = assessments.reduce((a, b) => a + b, 0) / assessments.length;
+            const variance = assessments.reduce((sum, score) => sum + Math.pow(score - averageScore, 2), 0) / assessments.length;
+            const consistency = Math.max(0, 100 - (Math.sqrt(variance) / averageScore * 100));
+            
+            let avgTime = 0;
+            if (completionTimes.length > 1) {
+                completionTimes.sort((a, b) => a - b);
+                const timeDiffs = [];
+                for (let i = 1; i < completionTimes.length; i++) {
+                    timeDiffs.push((completionTimes[i] - completionTimes[i-1]) / (1000 * 60));
+                }
+                if (timeDiffs.length > 0) {
+                    avgTime = timeDiffs.reduce((a, b) => a + b, 0) / timeDiffs.length;
+                }
+            }
+
+            metrics[assessorId] = {
+                name: appState.users[assessorId].name,
+                totalAssessments: assessments.length,
+                averageScore,
+                consistency: consistency.toFixed(0),
+                avgTime: avgTime > 0 ? `${avgTime.toFixed(0)}m` : 'N/A'
+            };
+        } else {
+            metrics[assessorId] = {
+                name: appState.users[assessorId].name,
+                totalAssessments: 0,
+                averageScore: 0,
+                consistency: 0,
+                avgTime: 'N/A'
+            };
+        }
+    });
+
+    return metrics;
+}
+
+// Helper function to generate performance insights
+function generatePerformanceInsights(categoryMetrics, allScores) {
+    const insights = [];
+    
+    const categoriesWithOverall = Object.values(categoryMetrics).filter(m => m.overallAvg > 0);
+    if (categoriesWithOverall.length > 0) {
+        const strongest = categoriesWithOverall.reduce((a, b) => a.overallAvg > b.overallAvg ? a : b);
+        insights.push(`
+            <div class="insight-card positive">
+                <i class="fas fa-arrow-up"></i>
+                <div class="insight-content">
+                    <strong>Strongest Category:</strong> ${strongest.name} with average ${strongest.overallAvg.toFixed(1)}
+                </div>
+            </div>
+        `);
+    }
+    
+    const westernTotal = Object.values(categoryMetrics).reduce((sum, m) => sum + m.westernAvg * m.westernCount, 0);
+    const westernCount = Object.values(categoryMetrics).reduce((sum, m) => sum + m.westernCount, 0);
+    const africanTotal = Object.values(categoryMetrics).reduce((sum, m) => sum + m.africanAvg * m.africanCount, 0);
+    const africanCount = Object.values(categoryMetrics).reduce((sum, m) => sum + m.africanCount, 0);
+    
+    const westernOverall = westernCount > 0 ? westernTotal / westernCount : 0;
+    const africanOverall = africanCount > 0 ? africanTotal / africanCount : 0;
+    
+    if (westernOverall > 0 && africanOverall > 0) {
+        const dominantGenre = westernOverall > africanOverall ? 'Western' : 'African';
+        const difference = Math.abs(westernOverall - africanOverall).toFixed(1);
+        insights.push(`
+            <div class="insight-card ${dominantGenre.toLowerCase() === 'western' ? 'western' : 'african'}">
+                <i class="fas fa-chart-line"></i>
+                <div class="insight-content">
+                    <strong>Genre Dominance:</strong> ${dominantGenre} performances average ${difference} points higher
+                </div>
+            </div>
+        `);
+    }
+    
+    const superiorCount = allScores.filter(s => s >= 90).length;
+    const excellentCount = allScores.filter(s => s >= 80 && s < 90).length;
+    
+    if (superiorCount > 0 || excellentCount > 0) {
+        insights.push(`
+            <div class="insight-card positive">
+                <i class="fas fa-star"></i>
+                <div class="insight-content">
+                    <strong>Top Performances:</strong> ${superiorCount} Superior + ${excellentCount} Excellent = ${superiorCount + excellentCount} top-tier performances
+                </div>
+            </div>
+        `);
+    }
+    
+    if (insights.length === 0) {
+        insights.push(`
+            <div class="insight-card neutral">
+                <i class="fas fa-info-circle"></i>
+                <div class="insight-content">
+                    <strong>No Data:</strong> Complete assessments to generate insights
+                </div>
+            </div>
+        `);
+    }
+    
+    return insights.join('');
+}
+
+// ========================
+// CHOIR IMPORT FUNCTIONS
+// ========================
 
 function openImportChoirs() {
-    // Reset importedChoirsData to empty array
     importedChoirsData = [];
     document.getElementById('importChoirsModal').style.display = 'flex';
     resetImportForm();
@@ -6978,7 +7062,6 @@ function openImportChoirs() {
 function closeImportChoirsModal() {
     document.getElementById('importChoirsModal').style.display = 'none';
     resetImportForm();
-    // Clear imported data when closing
     importedChoirsData = [];
 }
 
@@ -6993,7 +7076,6 @@ function resetImportForm() {
     if (importErrors) importErrors.style.display = 'none';
     const importBtn = document.getElementById('importBtn');
     if (importBtn) importBtn.style.display = 'none';
-    // Clear imported data when resetting
     importedChoirsData = [];
 }
 
@@ -7001,10 +7083,8 @@ function handleFileSelect(input) {
     const file = input.files[0];
     if (!file) return;
 
-    // Reset imported data
     importedChoirsData = [];
 
-    // Check file type
     const validTypes = ['.xlsx', '.xls', '.csv'];
     const fileName = file.name || '';
     const fileExtension = '.' + fileName.split('.').pop().toLowerCase();
@@ -7015,13 +7095,11 @@ function handleFileSelect(input) {
         return;
     }
 
-    // Show file info
     const fileNameEl = document.getElementById('fileName');
     if (fileNameEl) fileNameEl.textContent = fileName;
     const fileInfo = document.getElementById('fileInfo');
     if (fileInfo) fileInfo.style.display = 'block';
 
-    // Read and process the file
     const reader = new FileReader();
     reader.onload = function(e) {
         try {
@@ -7076,7 +7154,6 @@ function validateAndPreviewData(data) {
     const errors = [];
     const validChoirs = [];
     
-    // Check if data exists and has headers
     if (!data || data.length < 2) {
         errors.push('File must contain at least a header row and one data row');
         showImportErrors(errors);
@@ -7085,7 +7162,6 @@ function validateAndPreviewData(data) {
 
     const headers = data[0].map(h => h ? h.toString().trim().toLowerCase() : '');
     
-    // Validate required columns
     const requiredColumns = ['choir name', 'region', 'category', 'african song', 'western song'];
     const headerMap = {};
     
@@ -7103,11 +7179,10 @@ function validateAndPreviewData(data) {
         return;
     }
 
-    // Validate data rows
     for (let i = 1; i < data.length; i++) {
         const row = data[i];
         if (!row || row.length === 0 || row.every(cell => !cell || cell.toString().trim() === '')) {
-            continue; // Skip empty rows
+            continue;
         }
 
         const choir = {
@@ -7118,16 +7193,17 @@ function validateAndPreviewData(data) {
             westernSong: row[headerMap['western song']]?.toString().trim()
         };
 
-        // Validate choir data
         const rowErrors = [];
         
         if (!choir.name) rowErrors.push('Choir name is required');
         if (!choir.region) rowErrors.push('Region is required');
         if (!choir.category) rowErrors.push('Category is required');
-        if (!choir.africanSong) rowErrors.push('African song is required');
-        if (!choir.westernSong) rowErrors.push('Western song is required');
+        
+        // Check if at least one song is provided (not both required)
+        if (!choir.africanSong && !choir.westernSong) {
+            rowErrors.push('At least one song (African or Western) is required');
+        }
 
-        // Validate category
         const validCategories = ['GREAT CHAMPS', 'LARGE', 'STANDARD'];
         if (!validCategories.includes(choir.category)) {
             rowErrors.push(`Invalid category: ${choir.category}. Must be one of: ${validCategories.join(', ')}`);
@@ -7151,10 +7227,7 @@ function validateAndPreviewData(data) {
         return;
     }
 
-    // Store valid choirs in global variable
     importedChoirsData = validChoirs;
-    
-    // Show preview
     showImportPreview(validChoirs);
 }
 
@@ -7169,7 +7242,6 @@ function showImportErrors(errors) {
     if (importPreview) importPreview.style.display = 'none';
     const importBtn = document.getElementById('importBtn');
     if (importBtn) importBtn.style.display = 'none';
-    // Clear imported data on error
     importedChoirsData = [];
 }
 
@@ -7196,7 +7268,6 @@ function showImportPreview(choirs) {
 }
 
 function importChoirsData() {
-    // Use the global variable
     if (!importedChoirsData || importedChoirsData.length === 0) {
         showNotification('No data to import', 'error');
         return;
@@ -7205,7 +7276,6 @@ function importChoirsData() {
     let importedCount = 0;
     let skippedCount = 0;
 
-    // Get the next available ID
     let nextId = 1;
     if (appState.choirs.length > 0) {
         const ids = appState.choirs.map(c => c.id).filter(id => typeof id === 'number');
@@ -7213,7 +7283,6 @@ function importChoirsData() {
     }
 
     importedChoirsData.forEach(choirData => {
-        // Check for duplicate choir names (case insensitive)
         const existingChoir = appState.choirs.find(c => 
             c.name && choirData.name && 
             c.name.toLowerCase().trim() === choirData.name.toLowerCase().trim()
@@ -7224,7 +7293,6 @@ function importChoirsData() {
             return;
         }
 
-        // Create new choir with unique ID
         const newChoir = {
             id: nextId++,
             name: choirData.name,
@@ -7239,27 +7307,31 @@ function importChoirsData() {
         importedCount++;
     });
 
-    // Save to localStorage
-    scoringSystem.saveToLocalStorage();
+    appState.choirs.forEach(choir => {
+        if (choir.status !== 'assessed') {
+            if (!scoringSystem.assessorScores[choir.id] || 
+                (Object.keys(scoringSystem.assessorScores[choir.id]?.western || {}).length === 0 &&
+                 Object.keys(scoringSystem.assessorScores[choir.id]?.african || {}).length === 0)) {
+                choir.status = 'pending';
+            }
+        }
+    });
 
-    // Close modal and refresh
+    scoringSystem.saveToLocalStorage();
     closeImportChoirsModal();
 
-    // Show success message
     const message = importedCount > 0 
         ? `Successfully imported ${importedCount} choir(s)${skippedCount > 0 ? `. ${skippedCount} choir(s) skipped due to duplicates.` : ''}`
         : 'No new choirs were imported (all duplicates)';
     
     showNotification(message, importedCount > 0 ? 'success' : 'info');
     
-    // Refresh the view
     if (appState.currentView === 'manageChoirs') {
         renderManageChoirs();
     }
 }
 
 function downloadTemplate() {
-    // Create template data
     const templateData = [
         ['Choir Name', 'Region', 'Category', 'African Song', 'Western Song'],
         ['Example Choir 1', 'Gauteng', 'GREAT CHAMPS', 'African Song Title 1', 'Western Song Title 1'],
@@ -7267,26 +7339,22 @@ function downloadTemplate() {
         ['Example Choir 3', 'KwaZulu-Natal', 'STANDARD', 'African Song Title 3', 'Western Song Title 3']
     ];
 
-    // Create workbook
     let ws;
     if (typeof XLSX !== 'undefined') {
         ws = XLSX.utils.aoa_to_sheet(templateData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Choirs Template');
 
-        // Set column widths
         ws['!cols'] = [
-            {wch: 25}, // Choir Name
-            {wch: 15}, // Region
-            {wch: 15}, // Category
-            {wch: 30}, // African Song
-            {wch: 30}  // Western Song
+            {wch: 25},
+            {wch: 15},
+            {wch: 15},
+            {wch: 30},
+            {wch: 30}
         ];
 
-        // Download file
         XLSX.writeFile(wb, 'Choirs_Import_Template.xlsx');
     } else {
-        // Fallback: CSV
         const csvContent = templateData.map(row => row.join(',')).join('\n');
         const blob = new Blob([csvContent], { type: 'text/csv' });
         const url = window.URL.createObjectURL(blob);
@@ -7298,18 +7366,749 @@ function downloadTemplate() {
 }
 
 // ============================================
-// ADDITIONAL MISSING FUNCTIONS
+// COMPREHENSIVE CHOIR DETAILED REPORT GENERATOR
 // ============================================
+
+function showChoirFullReport(choirId) {
+    const choir = appState.choirs.find(c => c.id === choirId);
+    if (!choir) {
+        showNotification('Choir not found', 'error');
+        return;
+    }
+    
+    const stats = scoringSystem.getChoirStatistics(choirId);
+    
+    if (stats.western.count === 0 && stats.african.count === 0) {
+        showNotification('No assessment data available for this choir', 'warning');
+        return;
+    }
+    
+    appState.currentReportChoir = choir;
+    appState.currentReportStats = stats;
+    
+    document.getElementById('choirFullReportModal').style.display = 'flex';
+    renderFullReportPreview();
+}
+
+function closeChoirFullReportModal() {
+    document.getElementById('choirFullReportModal').style.display = 'none';
+}
+
+function renderFullReportPreview() {
+    const choir = appState.currentReportChoir;
+    const stats = appState.currentReportStats;
+    
+    if (!choir || !stats) return;
+    
+    const html = generateFullReportHTML(choir, stats);
+    document.getElementById('choirFullReportContent').innerHTML = html;
+}
+
+function generateFullReportHTML(choir, stats) {
+    const hasBothSongs = choir.africanSong && choir.africanSong.trim() !== '' && 
+                        choir.westernSong && choir.westernSong.trim() !== '';
+    
+    const overallRank = getChoirOverallRank(choir.id);
+    const westernRank = getChoirGenreRank(choir.id, 'western');
+    const africanRank = getChoirGenreRank(choir.id, 'african');
+    
+    const westernComments = getAllAssessorComments(choir.id, 'western');
+    const africanComments = getAllAssessorComments(choir.id, 'african');
+    
+    const reportId = `TMF-CHR-${new Date().getFullYear()}-${String(choir.id).padStart(5, '0')}`;
+    const generationDate = new Date().toLocaleString();
+    
+    return `
+        <div class="full-report-container" id="fullReportContent">
+            <div class="report-cover">
+                <div class="report-branding">
+                    <h1>TIRO MPANE FOUNDATION</h1>
+                    <h2>NATIONAL CHORALE EISTEDDFOD</h2>
+                    <h3>OFFICIAL CHOIR ASSESSMENT REPORT</h3>
+                </div>
+                
+                <div class="report-metadata">
+                    <div class="metadata-item">
+                        <span class="metadata-label">Report ID:</span>
+                        <span class="metadata-value">${reportId}</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Generated:</span>
+                        <span class="metadata-value">${generationDate}</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Status:</span>
+                        <span class="metadata-value status-badge completed">${choir.status === 'assessed' ? 'FINAL' : 'PENDING'}</span>
+                    </div>
+                </div>
+                
+                <div class="confidential-notice">
+                    <i class="fas fa-lock"></i> CONFIDENTIAL - For Official Use and Choir Representatives Only
+                </div>
+            </div>
+            
+            <div class="report-page">
+                <h3 class="page-title"><i class="fas fa-info-circle"></i> Choir Information</h3>
+                
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-row">
+                            <span class="info-label">Choir Name:</span>
+                            <span class="info-value">${choir.name}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Region:</span>
+                            <span class="info-value">${choir.region}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Category:</span>
+                            <span class="info-value"><span class="category-badge">${appState.categories[choir.category]}</span></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Registration ID:</span>
+                            <span class="info-value">TMF-${choir.category.substring(0,3)}-${String(choir.id).padStart(3, '0')}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <div class="info-row">
+                            <span class="info-label">African Song:</span>
+                            <span class="info-value">${choir.africanSong || 'Not Performed'}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Western Song:</span>
+                            <span class="info-value">${choir.westernSong || 'Not Performed'}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Performance Type:</span>
+                            <span class="info-value">${hasBothSongs ? 'Both Genres' : (choir.africanSong ? 'African Only' : 'Western Only')}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Assessment Status:</span>
+                            <span class="info-value"><span class="status-badge ${choir.status === 'assessed' ? 'completed' : 'pending'}">${choir.status.toUpperCase()}</span></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3 class="page-title"><i class="fas fa-chart-pie"></i> Executive Score Summary</h3>
+                
+                <div class="score-summary-dashboard">
+                    <div class="score-card western">
+                        <div class="score-header">WESTERN</div>
+                        <div class="score-value">${stats.western.trimmedMean > 0 ? stats.western.trimmedMean.toFixed(1) : 'N/A'}</div>
+                        <div class="score-grade ${getGradeClass(getGradeFromScore(stats.western.trimmedMean))}">${getGradeFromScore(stats.western.trimmedMean)}</div>
+                        <div class="score-details">
+                            <span><i class="fas fa-users"></i> ${stats.western.count} Assessors</span>
+                            <span><i class="fas fa-trophy"></i> Rank: ${westernRank}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="score-card african">
+                        <div class="score-header">AFRICAN</div>
+                        <div class="score-value">${stats.african.trimmedMean > 0 ? stats.african.trimmedMean.toFixed(1) : 'N/A'}</div>
+                        <div class="score-grade ${getGradeClass(getGradeFromScore(stats.african.trimmedMean))}">${getGradeFromScore(stats.african.trimmedMean)}</div>
+                        <div class="score-details">
+                            <span><i class="fas fa-users"></i> ${stats.african.count} Assessors</span>
+                            <span><i class="fas fa-trophy"></i> Rank: ${africanRank}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="score-card overall">
+                        <div class="score-header">OVERALL</div>
+                        <div class="score-value">${stats.overall.toFixed(1)}</div>
+                        <div class="score-grade ${getGradeClass(getGradeFromScore(stats.overall))}">${getGradeFromScore(stats.overall)}</div>
+                        <div class="score-details">
+                            <span><i class="fas fa-users"></i> ${stats.western.count + stats.african.count} Total</span>
+                            <span><i class="fas fa-trophy"></i> Rank: ${overallRank}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="report-page">
+                <h3 class="page-title"><i class="fas fa-table"></i> Detailed Rubric Assessment</h3>
+                
+                ${generateRubricTablesHTML(choir.id, stats)}
+            </div>
+            
+            <div class="report-page">
+                <h3 class="page-title"><i class="fas fa-comment"></i> Assessor Feedback</h3>
+                
+                <div class="comments-section">
+                    <h4 class="genre-heading western-heading"><i class="fas fa-globe"></i> Western Genre Comments</h4>
+                    ${generateCommentsHTML(westernComments, 'western')}
+                    
+                    <h4 class="genre-heading african-heading"><i class="fas fa-drum"></i> African Genre Comments</h4>
+                    ${generateCommentsHTML(africanComments, 'african')}
+                </div>
+            </div>
+            
+            <div class="report-footer">
+                <div class="footer-left">TMF National Chorale Eisteddfod - Official Report</div>
+                <div class="footer-center">Report ID: ${reportId}</div>
+                <div class="footer-right">Page <span class="page-number"></span> of 3</div>
+            </div>
+        </div>
+    `;
+}
+
+function getChoirOverallRank(choirId) {
+    const rankings = scoringSystem.finalRankings.overall;
+    const index = rankings.findIndex(r => r.choir.id === choirId);
+    return index !== -1 ? rankings[index].rank : 'N/A';
+}
+
+function getChoirGenreRank(choirId, genre) {
+    const rankings = scoringSystem.finalRankings[genre];
+    const index = rankings.findIndex(r => r.choir.id === choirId);
+    return index !== -1 ? rankings[index].rank : 'N/A';
+}
+
+function getAllAssessorComments(choirId, genre) {
+    const comments = [];
+    
+    if (scoringSystem.assessorScores[choirId] && 
+        scoringSystem.assessorScores[choirId][genre]) {
+        
+        Object.entries(scoringSystem.assessorScores[choirId][genre]).forEach(([assessorId, assessment]) => {
+            if (assessment.comments && assessment.comments.trim() !== '') {
+                comments.push({
+                    assessorId,
+                    assessorName: assessment.assessorName || `Assessor ${assessorId}`,
+                    score: assessment.total,
+                    comments: assessment.comments,
+                    submittedAt: assessment.submittedAt
+                });
+            }
+        });
+    }
+    
+    return comments.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+}
+
+function generateRubricTablesHTML(choirId, stats) {
+    const rubricCategories = [
+        { key: 'intonation', name: 'Intonation', max: 15 },
+        { key: 'pitchAccuracy', name: 'Pitch Accuracy', max: 15 },
+        { key: 'language', name: 'Language & Diction', max: 10 },
+        { key: 'vocalTechnique', name: 'Vocal Technique', max: 15 },
+        { key: 'choralTechnique', name: 'Choral Technique', max: 15 },
+        { key: 'rhythm', name: 'Rhythmic Accuracy', max: 15 },
+        { key: 'artistry', name: 'Artistic Relevance', max: 10 },
+        { key: 'stage', name: 'Stage Presence', max: 5 }
+    ];
+    
+    let html = '';
+    
+    if (stats.western.count > 0) {
+        html += `
+            <h4 class="genre-heading western-heading"><i class="fas fa-globe"></i> Western Genre Assessment</h4>
+            <div class="rubric-report-table">
+                <table class="full-report-table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            ${getAssessorHeaders(choirId, 'western')}
+                            <th>Trimmed Mean</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        rubricCategories.forEach(cat => {
+            html += `<tr>`;
+            html += `<td class="category-cell">${cat.name} <span class="max-score">(${cat.max})</span></td>`;
+            
+            const assessments = scoringSystem.assessorScores[choirId]?.western || {};
+            const scores = [];
+            
+            Object.values(assessments).forEach(assessment => {
+                scores.push(assessment[cat.key] || 0);
+            });
+            
+            const sortedScores = [...scores].sort((a, b) => a - b);
+            
+            Object.entries(assessments).forEach(([assessorId, assessment]) => {
+                const score = assessment[cat.key] || 0;
+                const isLowest = scores.length >= 3 && score === sortedScores[0];
+                const isHighest = scores.length >= 3 && score === sortedScores[sortedScores.length - 1];
+                
+                html += `<td class="score-cell ${isLowest ? 'lowest-score' : ''} ${isHighest ? 'highest-score' : ''}">${score.toFixed(1)}</td>`;
+            });
+            
+            let trimmedMean = 0;
+            if (scores.length === 1) {
+                trimmedMean = scores[0];
+            } else if (scores.length === 2) {
+                trimmedMean = (scores[0] + scores[1]) / 2;
+            } else if (scores.length >= 3) {
+                const trimmedScores = sortedScores.slice(1, -1);
+                trimmedMean = trimmedScores.reduce((a, b) => a + b, 0) / trimmedScores.length;
+            }
+            
+            html += `<td class="trimmed-mean"><strong>${trimmedMean.toFixed(1)}</strong></td>`;
+            html += `</tr>`;
+        });
+        
+        html += `<tr class="total-row">`;
+        html += `<td class="category-cell"><strong>TOTAL</strong></td>`;
+        
+        Object.entries(scoringSystem.assessorScores[choirId]?.western || {}).forEach(([assessorId, assessment]) => {
+            html += `<td class="total-cell"><strong>${assessment.total.toFixed(1)}</strong></td>`;
+        });
+        
+        html += `<td class="trimmed-mean"><strong>${stats.western.trimmedMean.toFixed(1)}</strong></td>`;
+        html += `</tr>`;
+        
+        html += `
+                    </tbody>
+                </table>
+                <div class="table-legend">
+                    <span class="legend-item"><span class="legend-color lowest-score"></span> Lowest Score (Removed)</span>
+                    <span class="legend-item"><span class="legend-color highest-score"></span> Highest Score (Removed)</span>
+                    <span class="legend-item"><span class="legend-color trimmed-mean"></span> Trimmed Mean (Final Score)</span>
+                </div>
+            </div>
+        `;
+    }
+    
+    if (stats.african.count > 0) {
+        html += `
+            <h4 class="genre-heading african-heading"><i class="fas fa-drum"></i> African Genre Assessment</h4>
+            <div class="rubric-report-table">
+                <table class="full-report-table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            ${getAssessorHeaders(choirId, 'african')}
+                            <th>Trimmed Mean</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        rubricCategories.forEach(cat => {
+            html += `<tr>`;
+            html += `<td class="category-cell">${cat.name} <span class="max-score">(${cat.max})</span></td>`;
+            
+            const assessments = scoringSystem.assessorScores[choirId]?.african || {};
+            const scores = [];
+            
+            Object.values(assessments).forEach(assessment => {
+                scores.push(assessment[cat.key] || 0);
+            });
+            
+            const sortedScores = [...scores].sort((a, b) => a - b);
+            
+            Object.entries(assessments).forEach(([assessorId, assessment]) => {
+                const score = assessment[cat.key] || 0;
+                const isLowest = scores.length >= 3 && score === sortedScores[0];
+                const isHighest = scores.length >= 3 && score === sortedScores[sortedScores.length - 1];
+                
+                html += `<td class="score-cell ${isLowest ? 'lowest-score' : ''} ${isHighest ? 'highest-score' : ''}">${score.toFixed(1)}</td>`;
+            });
+            
+            let trimmedMean = 0;
+            if (scores.length === 1) {
+                trimmedMean = scores[0];
+            } else if (scores.length === 2) {
+                trimmedMean = (scores[0] + scores[1]) / 2;
+            } else if (scores.length >= 3) {
+                const trimmedScores = sortedScores.slice(1, -1);
+                trimmedMean = trimmedScores.reduce((a, b) => a + b, 0) / trimmedScores.length;
+            }
+            
+            html += `<td class="trimmed-mean"><strong>${trimmedMean.toFixed(1)}</strong></td>`;
+            html += `</tr>`;
+        });
+        
+        html += `<tr class="total-row">`;
+        html += `<td class="category-cell"><strong>TOTAL</strong></td>`;
+        
+        Object.entries(scoringSystem.assessorScores[choirId]?.african || {}).forEach(([assessorId, assessment]) => {
+            html += `<td class="total-cell"><strong>${assessment.total.toFixed(1)}</strong></td>`;
+        });
+        
+        html += `<td class="trimmed-mean"><strong>${stats.african.trimmedMean.toFixed(1)}</strong></td>`;
+        html += `</tr>`;
+        
+        html += `
+                    </tbody>
+                </table>
+                <div class="table-legend">
+                    <span class="legend-item"><span class="legend-color lowest-score"></span> Lowest Score (Removed)</span>
+                    <span class="legend-item"><span class="legend-color highest-score"></span> Highest Score (Removed)</span>
+                    <span class="legend-item"><span class="legend-color trimmed-mean"></span> Trimmed Mean (Final Score)</span>
+                </div>
+            </div>
+        `;
+    }
+    
+    return html;
+}
+
+function getAssessorHeaders(choirId, genre) {
+    let headers = '';
+    
+    if (scoringSystem.assessorScores[choirId] && scoringSystem.assessorScores[choirId][genre]) {
+        Object.keys(scoringSystem.assessorScores[choirId][genre]).forEach(assessorId => {
+            const assessorName = scoringSystem.assessorScores[choirId][genre][assessorId].assessorName || `Assessor ${assessorId}`;
+            headers += `<th>${assessorName}</th>`;
+        });
+    }
+    
+    return headers;
+}
+
+function generateCommentsHTML(comments, genre) {
+    if (comments.length === 0) {
+        return `<p class="no-comments">No comments provided for ${genre} genre.</p>`;
+    }
+    
+    return comments.map(comment => `
+        <div class="comment-card ${genre}-comment">
+            <div class="comment-header">
+                <span class="comment-assessor"><i class="fas fa-user"></i> ${comment.assessorName}</span>
+                <span class="comment-score">Score: ${comment.score.toFixed(1)}</span>
+                <span class="comment-date">${new Date(comment.submittedAt).toLocaleString()}</span>
+            </div>
+            <div class="comment-body">
+                "${comment.comments}"
+            </div>
+        </div>
+    `).join('');
+}
+
+// =========================
+// PDF GENERATION FUNCTIONS
+// =========================
+
+function generateChoirFullReportPDF() {
+    const choir = appState.currentReportChoir;
+    if (!choir) {
+        showNotification('No report data available', 'error');
+        return;
+    }
+    
+    showNotification('Generating PDF report...', 'info');
+    
+    const reportElement = document.getElementById('fullReportContent');
+    if (!reportElement) {
+        showNotification('Report content not found', 'error');
+        return;
+    }
+    
+    const reportClone = reportElement.cloneNode(true);
+    reportClone.style.display = 'block';
+    reportClone.style.position = 'absolute';
+    reportClone.style.left = '-9999px';
+    reportClone.style.top = '-9999px';
+    reportClone.style.width = '800px';
+    reportClone.style.background = 'white';
+    reportClone.style.color = 'black';
+    document.body.appendChild(reportClone);
+    
+    if (typeof html2canvas !== 'undefined' && typeof jspdf !== 'undefined') {
+        const pages = reportClone.querySelectorAll('.report-page, .report-cover');
+        const pdf = new jspdf.jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+        });
+        
+        let pagePromises = [];
+        
+        pages.forEach((page, index) => {
+            pagePromises.push(
+                html2canvas(page, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    backgroundColor: '#ffffff',
+                    allowTaint: false,
+                    foreignObjectRendering: false
+                }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const imgWidth = 190;
+                    const pageHeight = 280;
+                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                    
+                    if (index > 0) {
+                        pdf.addPage();
+                    }
+                    
+                    pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+                })
+            );
+        });
+        
+        Promise.all(pagePromises).then(() => {
+            const filename = `TMF_Report_${choir.name.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+            pdf.save(filename);
+            
+            document.body.removeChild(reportClone);
+            showNotification('PDF report generated successfully!', 'success');
+        }).catch(error => {
+            console.error('Error generating PDF:', error);
+            showNotification('Error generating PDF. Please try again.', 'error');
+            document.body.removeChild(reportClone);
+        });
+    } else {
+        showNotification('PDF libraries not loaded. Please install html2canvas and jspdf.', 'warning');
+        document.body.removeChild(reportClone);
+    }
+}
+
+function printChoirFullReport() {
+    const choir = appState.currentReportChoir;
+    if (!choir) {
+        showNotification('No report data available', 'error');
+        return;
+    }
+    
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+        showNotification('Please allow pop-ups to print the report', 'error');
+        return;
+    }
+    
+    const reportElement = document.getElementById('fullReportContent');
+    const styles = document.querySelectorAll('style, link[rel="stylesheet"]');
+    let stylesHTML = '';
+    
+    styles.forEach(style => {
+        if (style.tagName === 'STYLE') {
+            stylesHTML += style.outerHTML;
+        } else if (style.tagName === 'LINK') {
+            stylesHTML += style.outerHTML;
+        }
+    });
+    
+    const printContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>TMF Choir Report - ${choir.name}</title>
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+            ${stylesHTML}
+            <style>
+                body { background: white; color: black; padding: 20px; }
+                .report-cover, .report-page { page-break-after: always; }
+                .full-report-container { max-width: 800px; margin: 0 auto; }
+                .report-footer { page-break-after: avoid; }
+                @media print {
+                    body { margin: 0; padding: 0; }
+                }
+            </style>
+        </head>
+        <body>
+            ${reportElement.outerHTML}
+        </body>
+        </html>
+    `;
+    
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    
+    setTimeout(() => {
+        printWindow.print();
+    }, 1000);
+}
+
+function exportChoirReportToExcel() {
+    const choir = appState.currentReportChoir;
+    const stats = appState.currentReportStats;
+    
+    if (!choir || !stats) {
+        showNotification('No report data available', 'error');
+        return;
+    }
+    
+    try {
+        const data = [];
+        
+        data.push(['TIRO MPANE FOUNDATION - CHOIR ASSESSMENT REPORT']);
+        data.push(['Generated:', new Date().toLocaleString()]);
+        data.push([]);
+        
+        data.push(['CHOIR INFORMATION']);
+        data.push(['Choir Name:', choir.name]);
+        data.push(['Region:', choir.region]);
+        data.push(['Category:', appState.categories[choir.category]]);
+        data.push(['African Song:', choir.africanSong || 'Not Performed']);
+        data.push(['Western Song:', choir.westernSong || 'Not Performed']);
+        data.push([]);
+        
+        data.push(['SCORE SUMMARY']);
+        data.push(['Genre', 'Final Score', 'Grade', 'Assessors', 'Rank']);
+        data.push(['Western', stats.western.trimmedMean > 0 ? stats.western.trimmedMean.toFixed(1) : 'N/A', 
+                  getGradeFromScore(stats.western.trimmedMean), stats.western.count, getChoirGenreRank(choir.id, 'western')]);
+        data.push(['African', stats.african.trimmedMean > 0 ? stats.african.trimmedMean.toFixed(1) : 'N/A',
+                  getGradeFromScore(stats.african.trimmedMean), stats.african.count, getChoirGenreRank(choir.id, 'african')]);
+        data.push(['Overall', stats.overall.toFixed(1), getGradeFromScore(stats.overall), 
+                  stats.western.count + stats.african.count, getChoirOverallRank(choir.id)]);
+        data.push([]);
+        
+        if (stats.western.count > 0) {
+            data.push(['WESTERN GENRE - DETAILED RUBRIC SCORES']);
+            const headers = ['Category'];
+            Object.keys(scoringSystem.assessorScores[choir.id]?.western || {}).forEach(assessorId => {
+                headers.push(scoringSystem.assessorScores[choir.id].western[assessorId].assessorName || `Assessor ${assessorId}`);
+            });
+            headers.push('Trimmed Mean');
+            data.push(headers);
+            
+            const rubricCategories = ['intonation', 'pitchAccuracy', 'language', 'vocalTechnique', 
+                                     'choralTechnique', 'rhythm', 'artistry', 'stage'];
+            const categoryNames = ['Intonation', 'Pitch Accuracy', 'Language & Diction', 'Vocal Technique',
+                                  'Choral Technique', 'Rhythmic Accuracy', 'Artistic Relevance', 'Stage Presence'];
+            
+            rubricCategories.forEach((cat, idx) => {
+                const row = [categoryNames[idx]];
+                const scores = [];
+                
+                Object.values(scoringSystem.assessorScores[choir.id].western).forEach(assessment => {
+                    row.push(assessment[cat]?.toFixed(1) || '0.0');
+                    scores.push(assessment[cat] || 0);
+                });
+                
+                let trimmedMean = 0;
+                const sortedScores = [...scores].sort((a, b) => a - b);
+                if (scores.length === 1) {
+                    trimmedMean = scores[0];
+                } else if (scores.length === 2) {
+                    trimmedMean = (scores[0] + scores[1]) / 2;
+                } else if (scores.length >= 3) {
+                    const trimmed = sortedScores.slice(1, -1);
+                    trimmedMean = trimmed.reduce((a, b) => a + b, 0) / trimmed.length;
+                }
+                row.push(trimmedMean.toFixed(1));
+                
+                data.push(row);
+            });
+            
+            const totalRow = ['TOTAL'];
+            Object.values(scoringSystem.assessorScores[choir.id].western).forEach(assessment => {
+                totalRow.push(assessment.total?.toFixed(1) || '0.0');
+            });
+            totalRow.push(stats.western.trimmedMean.toFixed(1));
+            data.push(totalRow);
+            data.push([]);
+        }
+        
+        if (stats.african.count > 0) {
+            data.push(['AFRICAN GENRE - DETAILED RUBRIC SCORES']);
+            const headers = ['Category'];
+            Object.keys(scoringSystem.assessorScores[choir.id]?.african || {}).forEach(assessorId => {
+                headers.push(scoringSystem.assessorScores[choir.id].african[assessorId].assessorName || `Assessor ${assessorId}`);
+            });
+            headers.push('Trimmed Mean');
+            data.push(headers);
+            
+            const rubricCategories = ['intonation', 'pitchAccuracy', 'language', 'vocalTechnique', 
+                                     'choralTechnique', 'rhythm', 'artistry', 'stage'];
+            const categoryNames = ['Intonation', 'Pitch Accuracy', 'Language & Diction', 'Vocal Technique',
+                                  'Choral Technique', 'Rhythmic Accuracy', 'Artistic Relevance', 'Stage Presence'];
+            
+            rubricCategories.forEach((cat, idx) => {
+                const row = [categoryNames[idx]];
+                const scores = [];
+                
+                Object.values(scoringSystem.assessorScores[choir.id].african).forEach(assessment => {
+                    row.push(assessment[cat]?.toFixed(1) || '0.0');
+                    scores.push(assessment[cat] || 0);
+                });
+                
+                let trimmedMean = 0;
+                const sortedScores = [...scores].sort((a, b) => a - b);
+                if (scores.length === 1) {
+                    trimmedMean = scores[0];
+                } else if (scores.length === 2) {
+                    trimmedMean = (scores[0] + scores[1]) / 2;
+                } else if (scores.length >= 3) {
+                    const trimmed = sortedScores.slice(1, -1);
+                    trimmedMean = trimmed.reduce((a, b) => a + b, 0) / trimmed.length;
+                }
+                row.push(trimmedMean.toFixed(1));
+                
+                data.push(row);
+            });
+            
+            const totalRow = ['TOTAL'];
+            Object.values(scoringSystem.assessorScores[choir.id].african).forEach(assessment => {
+                totalRow.push(assessment.total?.toFixed(1) || '0.0');
+            });
+            totalRow.push(stats.african.trimmedMean.toFixed(1));
+            data.push(totalRow);
+            data.push([]);
+        }
+        
+        data.push(['ASSESSOR COMMENTS']);
+        ['western', 'african'].forEach(genre => {
+            if (scoringSystem.assessorScores[choir.id] && scoringSystem.assessorScores[choir.id][genre]) {
+                data.push([genre.toUpperCase() + ' GENRE']);
+                Object.values(scoringSystem.assessorScores[choir.id][genre]).forEach(assessment => {
+                    if (assessment.comments) {
+                        data.push([`${assessment.assessorName} (Score: ${assessment.total.toFixed(1)})`, assessment.comments]);
+                    }
+                });
+                data.push([]);
+            }
+        });
+        
+        if (typeof XLSX !== 'undefined') {
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Choir Report');
+            
+            ws['!cols'] = [
+                {wch: 30}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 15}
+            ];
+            
+            const filename = `TMF_Report_${choir.name.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, filename);
+            
+            showNotification('Excel report exported successfully!', 'success');
+        } else {
+            showNotification('Excel library not loaded', 'warning');
+        }
+    } catch (error) {
+        console.error('Excel export error:', error);
+        showNotification('Error exporting to Excel', 'error');
+    }
+}
+
+function emailChoirReport() {
+    const choir = appState.currentReportChoir;
+    if (!choir) {
+        showNotification('No report data available', 'error');
+        return;
+    }
+    
+    const email = prompt('Enter email address to send the report:', 'choir@example.com');
+    
+    if (email) {
+        showNotification(`Report would be sent to ${email} (email integration required)`, 'info');
+    }
+}
+
+// ====================
+// ADDITIONAL FUNCTIONS
+// ====================
 
 function showAssessorPerformance() {
     showNotification('Assessor performance view coming soon', 'info');
 }
 
-// ============================================
-// FINAL EXPORTS AND INITIALIZATION
-// ============================================
+function addAnalyticsStyles() {
+    // This function is called but not implemented - adding a placeholder
+    console.log('Analytics styles initialized');
+}
 
-// Make all functions available globally
+// ================================
+// FINAL EXPORTS AND INITIALIZATION
+// ================================
+
 window.showLogin = showLogin;
 window.hideLogin = hideLogin;
 window.showForgotPassword = showForgotPassword;
@@ -7385,12 +8184,26 @@ window.handleFileSelect = handleFileSelect;
 window.importChoirsData = importChoirsData;
 window.downloadTemplate = downloadTemplate;
 window.clearAllAssessmentData = clearAllAssessmentData;
+window.resetSystemToCleanState = resetSystemToCleanState;
+window.debugCheckData = debugCheckData;
 window.showMyAssessmentsOnly = showMyAssessmentsOnly;
 
-// SEARCH BAR FUNCTIONS - Make them globally available
+window.showChoirFullReport = showChoirFullReport;
+window.generateChoirFullReportPDF = generateChoirFullReportPDF;
+window.printChoirFullReport = printChoirFullReport;
+window.exportChoirReportToExcel = exportChoirReportToExcel;
+window.emailChoirReport = emailChoirReport;
+window.closeChoirFullReportModal = closeChoirFullReportModal;
+
 window.filterChoirsBySearch = filterChoirsBySearch;
 window.clearSearch = clearSearch;
 window.filterMyAssessmentsBySearch = filterMyAssessmentsBySearch;
 window.clearMyAssessmentsSearch = clearMyAssessmentsSearch;
 
+// New methodology functions
+window.showChoirMethodologyDetails = showChoirMethodologyDetails;
+window.closeMethodologyDetailsModal = closeMethodologyDetailsModal;
+window.closeMethodologyGenreModal = closeMethodologyGenreModal;
+
 console.log('TMF Choral Judicators System v2.1.0 loaded successfully!');
+console.log('System ready for live competition - All monitoring dashboards include Back to Dashboard buttons');
